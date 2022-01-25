@@ -29,6 +29,12 @@ nb_path: "00_scraper.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Import-Libraries-and-Modules">Import Libraries and Modules<a class="anchor-link" href="#Import-Libraries-and-Modules"> </a></h3>
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -36,37 +42,14 @@ nb_path: "00_scraper.ipynb"
 </div>
     {% endraw %}
 
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="Parser" class="doc_header"><code>class</code> <code>Parser</code><a href="https://github.com/MeherKharbachi/TheGuardianScraper/tree/master/TheGuardianScraper/scraper.py#L14" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Parser</code>()</p>
-</blockquote>
-
-</div>
-
-</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Parser-Class">Parser Class<a class="anchor-link" href="#Parser-Class"> </a></h3><h5 id="This-class-is-used-to-parse-pages-and-has-two-functions:">This class is used to parse pages and has two functions:<a class="anchor-link" href="#This-class-is-used-to-parse-pages-and-has-two-functions:"> </a></h5><p>1- <b> parse_page </b> function:retrieves the html format of a given web page link.</p>
+<p>2- <b> get_next_page </b> function: retrieves the link to the next page and determines if it is the last page of previews in order to stop scraping.</p>
 
 </div>
 </div>
-
 </div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -78,8 +61,14 @@ nb_path: "00_scraper.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="PageExtractor" class="doc_header"><code>class</code> <code>PageExtractor</code><a href="https://github.com/MeherKharbachi/TheGuardianScraper/tree/master/TheGuardianScraper/scraper.py#L45" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PageExtractor</code>()</p>
+<h2 id="Parser" class="doc_header"><code>class</code> <code>Parser</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L14" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Parser</code>()</p>
 </blockquote>
+<p>A class to represent previews pages parser.</p>
+<p>...</p>
+<h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>parse_page(page_url,session)
+    returns the html format of the page.
+get_next_page(page)
+    returns the link of the following page and if it's the last page.</p>
 
 </div>
 
@@ -98,6 +87,36 @@ nb_path: "00_scraper.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="PageExtractor-Class">PageExtractor Class<a class="anchor-link" href="#PageExtractor-Class"> </a></h3><h5 id="This-class-has-five-functions-for-extracting-data-from-a-given-football-preview:">This class has five functions for extracting data from a given football preview:<a class="anchor-link" href="#This-class-has-five-functions-for-extracting-data-from-a-given-football-preview:"> </a></h5><p>1- <b> get_values_matching_regex </b> returns values that match a regex expression.</p>
+<p>&emsp;Because the "Guardian" website has two possible formats, we defined two possible classifiers for the p tags <br>&emsp;containing the information to be extracted.<br>
+&emsp;We go through each p section, and if we find the result, we return it; otherwise, a None is returned.<br>
+&emsp;The result is a list of tuples, with each tuple representing a value that matches the regex pattern.<br> &emsp;Unsatisfied patterns for regexes that include <b>OR</b> conditions will be empty tuples. That's why you need to get rid of it.</p>
+<p>2- <b> extract_teams_names </b> returns the names of the two teams in a football preview.</p>
+<p>&emsp;The preview includes team names at the title level.
+ <br>&emsp;example:
+          &emsp;&emsp;{{Squad Sheets: Team A v Team B}} 
+         or &emsp;&emsp;{{Team A v Team B: match preview}} 
+         or &emsp;&emsp;{{Team A v Team B: Squad Sheets}}
+<br>&emsp;As a result, our strategy is to delete the text preceding or following the names and recover each name <br>&emsp;individually.
+<br>&emsp;If we were successful in obtaining the names, they will be returned in a Python dictionary; <br>&emsp;otherwise, the values will be 'n/a'(Not available).</p>
+<p>3- <b> extract_text_authors </b>returns the text and author of a football preview.</p>
+<p>&emsp;It's difficult to determine the position of the text, but it's almost certainly the block with the most <br>&emsp;characters.
+<br>&emsp;To proceed, we store each paragraph and its size in a Python dictionary, and then we take the <br>&emsp;block with the largest size.
+<br>&emsp;To be sure, we double-check by only accepting texts with a size greater than 160 because there <br>&emsp;are football previews with no text or author.
+<br>&emsp;Furthermore, the author information is always under the text section, more specifically in a <br>&emsp;strong tag, so if the text does not exist, the author is missing as well.
+If we were successful in <br>&emsp;obtaining the text and the author, they will be returned in a Python dictionary. Otherwise, the <br>&emsp;values will be 'n/a'(Not available).</p>
+<p>4- <b> extract_preview_date </b> returns the date of publication of a football preview.</p>
+<p>&emsp;We have distinguished two dates for the date of publication: the first is the date of publication, <br>&emsp;and the second is the date of the most recent modification.
+In this sense, we go through the <br>&emsp;section where the two dates are located and take only the first and use 'dateparser' to convert <br>&emsp;the string into a date in "yyyy-mm-dd" format.
+If we were successful in obtaining the date, it will <br>&emsp; be returned. Otherwise, the value will be 'n/a'(Not available).</p>
+<p>5- <b> extract_match_infos </b> returns a football match information (venue, referee, odds).</p>
+<p>&emsp;Here, we'll call the first function <b>get_values_matching_regex</b> , which will allow us to retrieve this<br>&emsp;information by specifying a regex expression for each.<br>&emsp;If this data is not available, the value will be 'n/a'.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -109,8 +128,20 @@ nb_path: "00_scraper.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/TheGuardianScraper/tree/master/TheGuardianScraper/scraper.py#L113" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
+<h2 id="PageExtractor" class="doc_header"><code>class</code> <code>PageExtractor</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L92" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PageExtractor</code>()</p>
 </blockquote>
+<p>A class to represent an information extractor from a football preview.</p>
+<p>...</p>
+<h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>get_values_matching_regex(page, regex)
+    return all matched patterns from a preview page.
+extract_teams_names(title)
+    returns team names from the preview title.
+extract_text_authors(page)
+    returns the text and author of the preview.
+extract_preview_date(page)
+    returns the publication date of the preview.
+extract_match_infos(page, venue_regex, referee_regex, odds_regex)
+    returns a football match information (venue,referee,odds).</p>
 
 </div>
 
@@ -129,6 +160,83 @@ nb_path: "00_scraper.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="PageExtractor-Class">PageExtractor Class<a class="anchor-link" href="#PageExtractor-Class"> </a></h3><h5 id="This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-3-functions:">This class represents a scraper from the "Guardian" website and has 3 functions:<a class="anchor-link" href="#This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-3-functions:"> </a></h5><p>1- <b> calculate_betting_odds </b> returns decimal odds.</p>
+<p>&emsp;In this section, we will calculate the odds derived from the football preview.
+<br>&emsp;Considering the following example:
+<br>&emsp;&emsp; ["9-20","29-5","6-5"] 
+<br>&emsp;&emsp;We calculate each sport's rating separately using the following formula:
+<br>&emsp;&emsp;&emsp; home = (9/20) + 1 
+<br>&emsp;&emsp;&emsp; away = (29/5) + 1
+<br>&emsp;&emsp;&emsp; draw = (6/5) + 1
+<br>&emsp;If we were successful in obtaining decimal odds, they will be returned in a Python dictionary.<br>&emsp;Otherwise, the values will be 'n/a'(Not available).</p>
+<p>2- <b> extract_preview_items </b>returns the entire contents of a football preview.</p>
+<p>&emsp;In this section, we will call the functions defined in the PageExtractor class and return a Python dictionary containing all of this information.
+<br>&emsp;But first, we use the <b>calculate_betting_odds</b> function to calculate the sports odds for the home team's victory, the away team's victory, and a draw.</p>
+<p>"home team","away team","text","author","venue","referee","odds","odds home team","odds away team","odds draw", "preview date" are the values returned.</p>
+<p>3- <b> extract_previews </b>returns all the information of all browsed previews.</p>
+<p>&emsp;For a given page, we retrieve all the previews and go through them one by one, taking the link, title, subject, and aside section.
+<br>&emsp;if the words "cup" or "champions league" do not belong in these sections, we process the preview
+<br>&emsp;otherwise, we move on to the next preview.
+<br>&emsp;The previous function, <b>extract_preview_items</b>, will be called here to extract the information from each preview, which will then be stored in a list called <br>&emsp;<b>all_previews_information</b>.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L335" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
+</blockquote>
+<p>A class to represent a scraper from the "Guardian" website.</p>
+<p>...</p>
+<h2 id="Attributes">Attributes<a class="anchor-link" href="#Attributes"> </a></h2><p>session : requests_html.HTMLSession
+    a web session
+VENUE_REGEX : str
+    venue regex expression
+REFEREE_REGEX : str
+    referee regex expression
+ODDS_REGEX : str
+    odds regex expression</p>
+<h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>calculate_betting_odds(odds)
+    returns decimal odds.
+extract_preview_items(page,title)
+    returns all information of a football preview
+extract_previews(self,page)
+    returns all the information of all browsed previews</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="USE-CASE">USE CASE<a class="anchor-link" href="#USE-CASE"> </a></h2><h4 id="scraping-only-one-given-page">scraping only one given page<a class="anchor-link" href="#scraping-only-one-given-page"> </a></h4>
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -138,9 +246,32 @@ nb_path: "00_scraper.ipynb"
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews&quot;</span>
 <span class="n">scraper</span> <span class="o">=</span> <span class="n">ScrapingTheGuardian</span><span class="p">()</span>
-<span class="n">previews_infos</span><span class="o">=</span><span class="p">[]</span>
-<span class="n">page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">parse_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">scraper</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+<span class="n">previews_infos</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">parse_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">scraper</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
 <span class="n">previews_infos</span> <span class="o">=</span> <span class="n">scraper</span><span class="o">.</span><span class="n">extract_previews</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Visualize-data">Visualize data<a class="anchor-link" href="#Visualize-data"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">previews_infos</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -157,7 +288,7 @@ nb_path: "00_scraper.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">previews_infos</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -199,268 +330,79 @@ nb_path: "00_scraper.ipynb"
       <th>odds_home_team</th>
       <th>odds_away_team</th>
       <th>odds_draw</th>
+      <th>preview_date</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Leeds</td>
-      <td>Newcastle</td>
-      <td>Can Eddie Howe choreograph Newcastle’s second ...</td>
-      <td>Louise Taylor</td>
-      <td>Elland Road</td>
-      <td>Chris Kavanagh</td>
-      <td>(1-1, 3-1, 5-2)</td>
-      <td>2.000000</td>
-      <td>4.000000</td>
-      <td>3.500000</td>
+      <td>Arsenal</td>
+      <td>Burnley</td>
+      <td>Arsenal have no excuses if their dismal form i...</td>
+      <td>Graham Searles</td>
+      <td>Emirates Stadium</td>
+      <td>David Coote</td>
+      <td>[2-5, 9-1, 4-1]</td>
+      <td>1.400000</td>
+      <td>10.000000</td>
+      <td>5.000000</td>
+      <td>2022-01-22</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>West Ham</td>
-      <td>Leeds</td>
-      <td>West Ham regained fourth place by beating Norw...</td>
+      <td>Chelsea</td>
+      <td>Tottenham</td>
+      <td>The dynamic has changed before Chelsea and Tot...</td>
       <td>Jacob Steinberg</td>
-      <td>London Stadium</td>
-      <td>Mike Dean</td>
-      <td>(4-6, 43-10, 3-1)</td>
-      <td>1.666667</td>
-      <td>5.300000</td>
-      <td>4.000000</td>
+      <td>Stamford Bridge</td>
+      <td>Paul Tierney</td>
+      <td>[13-18, 9-2, 13-4]</td>
+      <td>1.722222</td>
+      <td>5.500000</td>
+      <td>4.250000</td>
+      <td>2022-01-22</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Tottenham</td>
-      <td>Arsenal</td>
-      <td>For the first time in a while more than just b...</td>
+      <td>Crystal Palace</td>
+      <td>Liverpool</td>
+      <td>Liverpool have already dispelled most of the d...</td>
       <td>Stephen Hollis</td>
-      <td>Tottenham Hotspur Stadium</td>
-      <td>Chris Kavanagh</td>
-      <td>(8-5, 2-1, 12-5)</td>
-      <td>2.600000</td>
-      <td>3.000000</td>
-      <td>3.400000</td>
+      <td>Selhurst Park</td>
+      <td>Kevin Friend</td>
+      <td>[5-1, 8-13, 10-3]</td>
+      <td>6.000000</td>
+      <td>1.615385</td>
+      <td>4.333333</td>
+      <td>2022-01-22</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Liverpool</td>
-      <td>Brentford</td>
-      <td>Albert Stubbins, the only footballer to featur...</td>
-      <td>Andy Hunter</td>
-      <td>Anfield</td>
-      <td>Jon Moss</td>
-      <td>(1-3, 21-2, 5-1)</td>
-      <td>1.333333</td>
-      <td>11.500000</td>
-      <td>6.000000</td>
+      <td>Leicester</td>
+      <td>Brighton</td>
+      <td>Brendan Rodgers blamed naivety for the extraor...</td>
+      <td>Paul Doyle</td>
+      <td>King Power Stadium</td>
+      <td>Martin Atkinson</td>
+      <td>[8-5, 9-2, 12-5]</td>
+      <td>2.600000</td>
+      <td>5.500000</td>
+      <td>3.400000</td>
+      <td>2022-01-22</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Newcastle</td>
-      <td>Watford</td>
-      <td>Moussa Sissoko returns to Newcastle in Watford...</td>
-      <td>Louise Taylor</td>
-      <td>St James’ Park</td>
-      <td>Paul Tierney</td>
-      <td>(19-17, 27-10, 27-10)</td>
-      <td>2.117647</td>
-      <td>3.700000</td>
-      <td>3.700000</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Manchester City</td>
-      <td>Chelsea</td>
-      <td>Manchester City would surely finish off Chelse...</td>
-      <td>Jamie Jackson</td>
-      <td>Etihad Stadium</td>
-      <td>Craig Pawson</td>
-      <td>(8-11, 22-5, 3-1)</td>
-      <td>1.727273</td>
-      <td>5.400000</td>
-      <td>4.000000</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>Aston Villa</td>
       <td>Manchester United</td>
-      <td>The extent of the problems Ralf Rangnick has i...</td>
-      <td>Stephen Hollis</td>
-      <td>Villa Park</td>
-      <td>David Coote</td>
-      <td>(2-1, 19-13, 13-5)</td>
-      <td>3.000000</td>
-      <td>2.461538</td>
-      <td>3.600000</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>Norwich</td>
-      <td>Everton</td>
-      <td>If Norwich have any hope of staging an unlikel...</td>
-      <td>Stephen Hollis</td>
-      <td>Carrow Road</td>
-      <td>Andy Madley</td>
-      <td>(37-13, 19-17, 18-7)</td>
-      <td>3.846154</td>
-      <td>2.117647</td>
-      <td>3.571429</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>Wolves</td>
-      <td>Southampton</td>
-      <td>Southampton were excellent in their 4-1 stroll...</td>
-      <td>Graham Searles</td>
-      <td>Molineux</td>
-      <td>Michael Salisbury</td>
-      <td>(11-8, 5-2, 9-4)</td>
-      <td>2.375000</td>
-      <td>3.500000</td>
-      <td>3.250000</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>Brentford</td>
-      <td>Aston Villa</td>
-      <td>Steven Gerrard returns to the touchline for As...</td>
-      <td>Tim Knowles</td>
-      <td>Brentford Community Stadium</td>
-      <td>Craig Pawson</td>
-      <td>(2-1, 6-4, 2-1)</td>
-      <td>3.000000</td>
-      <td>2.500000</td>
-      <td>3.000000</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>Chelsea</td>
-      <td>Liverpool</td>
-      <td>After threatening a three-way title race, Chel...</td>
-      <td>Jacob Steinberg</td>
-      <td>Stamford Bridge</td>
-      <td>Anthony Taylor</td>
-      <td>(2-1, 7-5, 13-5)</td>
-      <td>3.000000</td>
-      <td>2.400000</td>
-      <td>3.600000</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>Leeds</td>
-      <td>Burnley</td>
-      <td>The bad news for Marcelo Bielsa and Leeds is t...</td>
-      <td>Louise Taylor</td>
-      <td>Elland Road</td>
-      <td>Kevin Friend</td>
-      <td>(6-5, 5-2, 13-5)</td>
-      <td>2.200000</td>
-      <td>3.500000</td>
-      <td>3.600000</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>Everton</td>
-      <td>Brighton</td>
-      <td>Everton bid to start the year with a much-need...</td>
-      <td>Simon Mail</td>
-      <td>Goodison Park</td>
-      <td>John Brooks</td>
-      <td>(7-4, 15-8, 9-4)</td>
-      <td>2.750000</td>
-      <td>2.875000</td>
-      <td>3.250000</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>Manchester United</td>
-      <td>Wolves</td>
-      <td>Can Manchester United start 2022 with their mo...</td>
+      <td>West Ham</td>
+      <td>This is a genuine six-pointer in which Manches...</td>
       <td>Jamie Jackson</td>
       <td>Old Trafford</td>
-      <td>Mike Dean</td>
-      <td>(3-5, 11-2, 10-3)</td>
-      <td>1.600000</td>
-      <td>6.500000</td>
-      <td>4.333333</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>Crystal Palace</td>
-      <td>West Ham</td>
-      <td>A victory against Norwich in the absence of Pa...</td>
-      <td>Ed Aarons</td>
-      <td>Selhurst Park</td>
-      <td>Michael Oliver</td>
-      <td>(23-10, 15-11, 5-2)</td>
-      <td>3.300000</td>
-      <td>2.363636</td>
-      <td>3.500000</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>Arsenal</td>
-      <td>Manchester City</td>
-      <td>Arsenal are undoubtedly in much better shape t...</td>
-      <td>Graham Searles</td>
-      <td>Emirates Stadium</td>
-      <td>Stuart Attwell</td>
-      <td>(5-1, 4-7, 15-4)</td>
-      <td>6.000000</td>
-      <td>1.571429</td>
-      <td>4.750000</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>Watford</td>
-      <td>Tottenham</td>
-      <td>Watford attempt to arrest their alarming slump...</td>
-      <td>Simon Mail</td>
-      <td>Vicarage Road</td>
-      <td>Robert Jones</td>
-      <td>(9-2, 4-6, 3-1)</td>
-      <td>5.500000</td>
-      <td>1.666667</td>
-      <td>4.000000</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>Newcastle</td>
-      <td>Manchester United</td>
-      <td>Manchester United’s Ralf Rangnick has experien...</td>
-      <td>Luke McLaughlin</td>
-      <td>St James’ Park</td>
-      <td>Craig Pawson</td>
-      <td>(6-1, 4-9, 7-2)</td>
-      <td>7.000000</td>
-      <td>1.444444</td>
-      <td>4.500000</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>West Ham</td>
-      <td>Southampton</td>
-      <td>Southampton are on a winless run of six matche...</td>
-      <td>Alex Reid</td>
-      <td>London Stadium</td>
-      <td>Kevin Friend</td>
-      <td>(5-6, 3-1, 11-4)</td>
-      <td>1.833333</td>
+      <td>Jon Moss</td>
+      <td>[10-11, 3-1, 11-4]</td>
+      <td>1.909091</td>
       <td>4.000000</td>
       <td>3.750000</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>Tottenham</td>
-      <td>Crystal Palace</td>
-      <td>Tottenham looked energised in the 2-2 draw wit...</td>
-      <td>Luke McLaughlin</td>
-      <td>Tottenham Hotspur Stadium</td>
-      <td>Jonathan Moss</td>
-      <td>(3-4, 4-1, 11-4)</td>
-      <td>1.750000</td>
-      <td>5.000000</td>
-      <td>3.750000</td>
+      <td>2022-01-21</td>
     </tr>
   </tbody>
 </table>
@@ -475,6 +417,22 @@ nb_path: "00_scraper.ipynb"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Scraping-all-pages">Scraping all pages<a class="anchor-link" href="#Scraping-all-pages"> </a></h3>
+</div>
+</div>
+</div>url = "https://www.theguardian.com/football/series/match-previews"
+scraper = ScrapingTheGuardian()
+all_previews =[]
+last_page = False
+while True and last_page == False : 
+    page = Parser.parse_page(url,scraper.session)
+    previews_infos = scraper.extract_previews(page)
+    all_previews.append(previews_infos)
+    url, last_page = Parser.get_next_page(page)
+    # wait 20s
+    sleep(20)
 </div>
  
 

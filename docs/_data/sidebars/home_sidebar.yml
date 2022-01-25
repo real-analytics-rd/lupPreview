@@ -13,6 +13,6 @@ entries:
       title: The Guardian Scraper
       url: scraper.html
     output: web
-    title: TheGuardianScraper
+    title: guardian_scraper
   output: web
   title: Sidebar
