@@ -6,9 +6,11 @@ __all__ = ['Parser', 'PageExtractor', 'ScrapingTheGuardian']
 import re
 import dateparser
 import pandas as pd
+from typing import *
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 from time import sleep
+from datetime import datetime
 
 # Cell
 class Parser:
@@ -26,7 +28,7 @@ class Parser:
     """
 
     @staticmethod
-    def parse_page(page_url, session):
+    def parse_page(page_url: str, session: HTMLSession) -> BeautifulSoup:
         """
         returns the html format of the page.
 
@@ -50,7 +52,7 @@ class Parser:
         return page
 
     @staticmethod
-    def get_next_page(page):
+    def get_next_page(page: BeautifulSoup) -> Tuple[str, bool]:
         """
         returns the link of the following page and if it's the last page.
 
@@ -110,7 +112,9 @@ class PageExtractor:
     """
 
     @staticmethod
-    def get_values_matching_regex(page, regex):
+    def get_values_matching_regex(
+        page: BeautifulSoup, regex: str
+    ) -> Union[List[str], None]:
         """
         returns all matched patterns from a preview page.
 
@@ -157,7 +161,7 @@ class PageExtractor:
                 return result
 
     @staticmethod
-    def extract_teams_names(title):
+    def extract_teams_names(title: str) -> Dict[str, str]:
         """
         returns team names from the preview title.
 
@@ -199,7 +203,7 @@ class PageExtractor:
         return names
 
     @staticmethod
-    def extract_text_authors(page):
+    def extract_text_authors(page: BeautifulSoup) -> Dict[str, str]:
         """
         returns the text and author of the preview.
 
@@ -253,7 +257,7 @@ class PageExtractor:
         return preview_text_author
 
     @staticmethod
-    def extract_preview_date(page):
+    def extract_preview_date(page: BeautifulSoup) -> Union[datetime, str]:
         """
           returns the publication date of the preview.
 
@@ -292,7 +296,9 @@ class PageExtractor:
         return preview_date
 
     @staticmethod
-    def extract_match_infos(page, venue_regex, referee_regex, odds_regex):
+    def extract_match_infos(
+        page: BeautifulSoup, venue_regex: str, referee_regex: str, odds_regex: str
+    ) -> Dict[str, str]:
         """
           returns a football match information (venue,referee,odds).
 
@@ -375,7 +381,7 @@ class ScrapingTheGuardian:
         self.session = HTMLSession()
 
     @staticmethod
-    def calculate_betting_odds(odds):
+    def calculate_betting_odds(odds: list) -> Dict[str, float]:
         """
           returns decimal odds.
 
@@ -439,7 +445,7 @@ class ScrapingTheGuardian:
         return betting_odds
 
     @staticmethod
-    def extract_preview_items(page, title):
+    def extract_preview_items(page: BeautifulSoup, title: str) -> Dict[str, object]:
         """
           returns all information of a football preview
 
@@ -502,7 +508,7 @@ class ScrapingTheGuardian:
         )
         return preview_items
 
-    def extract_previews(self, page):
+    def extract_previews(self, page: BeautifulSoup) -> List[Dict[str, object]]:
         """
           returns all the information of all browsed previews
 
@@ -532,8 +538,6 @@ class ScrapingTheGuardian:
             preview_title = preview_page.find("h1").text
             # Check if "cup" or "Champions league" exists in:
             # title, link, preview topic section and preview aside section
-            # if the preview is not a cup or not for Champions league:
-            # we proceed the extraction
             # we pick preview topic
             try:
                 preview_topic = preview_page.find("div", {"class": "dcr-lwa3gj"}).text
@@ -550,40 +554,30 @@ class ScrapingTheGuardian:
                 preview_aside = preview_page.find(
                     "div", {"class": "content__labels"}
                 ).text
-            # Champions league
-            cl_not_in_title = (
-                re.search("Champions League", preview_title, re.IGNORECASE) is None
-            )
-            cl_not_in_link = (
-                re.search("champions-league", preview_link, re.IGNORECASE) is None
-            )
-            cl_not_in_preview_topic = (
-                re.search("Champions League", preview_topic, re.IGNORECASE) is None
-            )
-            cl_not_in_preview_aside = (
-                re.search("Champions League", preview_aside, re.IGNORECASE) is None
-            )
-            # Cup
-            cup_not_in_title = re.search("cup", preview_title, re.IGNORECASE) is None
-            cup_not_in_link = re.search("cup", preview_link, re.IGNORECASE) is None
-            cup_not_in_preview_topic = (
-                re.search("cup", preview_topic, re.IGNORECASE) is None
-            )
-            cup_not_in_preview_aside = (
-                re.search("cup", preview_aside, re.IGNORECASE) is None
-            )
+            # if the preview is not a cup or not for Champions league:
+            # we proceed the extraction
+            # we pick preview topic
+            not_premier_league_found = False
+            eliminated_matches = ["Champions League", "champions-league", "cup"]
+            for word in eliminated_matches:
+                # test if the word in the preview title
+                if re.search(word, preview_title, re.IGNORECASE):
+                    not_premier_league_found = True
+                    break
+                # test if the word in the preview link
+                if re.search(word, preview_link, re.IGNORECASE):
+                    not_premier_league_found = True
+                    break
+                # test if the word in the preview topic
+                if re.search(word, preview_topic, re.IGNORECASE):
+                    not_premier_league_found = True
+                    break
+                # test if the word in the preview aside
+                if re.search(word, preview_aside, re.IGNORECASE):
+                    not_premier_league_found = True
+                    break
 
-            if (
-                cup_not_in_title
-                and cup_not_in_link
-                and cup_not_in_preview_topic
-                and cup_not_in_preview_aside
-            ) and (
-                cl_not_in_title
-                and cl_not_in_link
-                and cl_not_in_preview_topic
-                and cl_not_in_preview_aside
-            ):
+            if not not_premier_league_found:
                 preview_items = ScrapingTheGuardian.extract_preview_items(
                     preview_page, preview_title
                 )

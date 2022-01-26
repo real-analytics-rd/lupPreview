@@ -61,7 +61,7 @@ nb_path: "00_scraper.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="Parser" class="doc_header"><code>class</code> <code>Parser</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L14" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Parser</code>()</p>
+<h2 id="Parser" class="doc_header"><code>class</code> <code>Parser</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L16" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Parser</code>()</p>
 </blockquote>
 <p>A class to represent previews pages parser.</p>
 <p>...</p>
@@ -128,7 +128,7 @@ If we were successful in obtaining the date, it will <br>&emsp; be returned. Oth
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="PageExtractor" class="doc_header"><code>class</code> <code>PageExtractor</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L92" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PageExtractor</code>()</p>
+<h2 id="PageExtractor" class="doc_header"><code>class</code> <code>PageExtractor</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L94" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PageExtractor</code>()</p>
 </blockquote>
 <p>A class to represent an information extractor from a football preview.</p>
 <p>...</p>
@@ -195,7 +195,7 @@ extract_match_infos(page, venue_regex, referee_regex, odds_regex)
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L335" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
+<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L341" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
 </blockquote>
 <p>A class to represent a scraper from the "Guardian" website.</p>
 <p>...</p>
@@ -244,7 +244,7 @@ extract_previews(self,page)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews?page=200&quot;</span>
 <span class="n">scraper</span> <span class="o">=</span> <span class="n">ScrapingTheGuardian</span><span class="p">()</span>
 <span class="n">previews_infos</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">parse_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">scraper</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
@@ -288,7 +288,7 @@ extract_previews(self,page)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span>
 </pre></div>
 
     </div>
@@ -336,73 +336,213 @@ extract_previews(self,page)
   <tbody>
     <tr>
       <th>0</th>
-      <td>Arsenal</td>
-      <td>Burnley</td>
-      <td>Arsenal have no excuses if their dismal form i...</td>
-      <td>Graham Searles</td>
-      <td>Emirates Stadium</td>
-      <td>David Coote</td>
-      <td>[2-5, 9-1, 4-1]</td>
-      <td>1.400000</td>
-      <td>10.000000</td>
-      <td>5.000000</td>
-      <td>2022-01-22</td>
+      <td>Birmingham City</td>
+      <td>Everton</td>
+      <td>Try telling these clubs that the Europa League...</td>
+      <td>Sachin Nakrani</td>
+      <td>St Andrew's</td>
+      <td>L Probert</td>
+      <td>[2-1, 5-4, 12-5]</td>
+      <td>3.000000</td>
+      <td>2.250000</td>
+      <td>3.4</td>
+      <td>2010-03-12</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Chelsea</td>
-      <td>Tottenham</td>
-      <td>The dynamic has changed before Chelsea and Tot...</td>
-      <td>Jacob Steinberg</td>
-      <td>Stamford Bridge</td>
-      <td>Paul Tierney</td>
-      <td>[13-18, 9-2, 13-4]</td>
-      <td>1.722222</td>
-      <td>5.500000</td>
-      <td>4.250000</td>
-      <td>2022-01-22</td>
+      <td>Tottenham Hotspur</td>
+      <td>Blackburn Rovers</td>
+      <td>A lunchtime kick-off gives Tottenham a chance ...</td>
+      <td>David Lacey</td>
+      <td>White Hart Lane</td>
+      <td>H Webb</td>
+      <td>[5-11, 15-2, 10-3]</td>
+      <td>1.454545</td>
+      <td>8.500000</td>
+      <td>4.333333</td>
+      <td>2010-03-12</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Crystal Palace</td>
-      <td>Liverpool</td>
-      <td>Liverpool have already dispelled most of the d...</td>
-      <td>Stephen Hollis</td>
-      <td>Selhurst Park</td>
-      <td>Kevin Friend</td>
-      <td>[5-1, 8-13, 10-3]</td>
-      <td>6.000000</td>
-      <td>1.615385</td>
-      <td>4.333333</td>
-      <td>2022-01-22</td>
+      <td>West Ham United</td>
+      <td>Bolton Wanderers</td>
+      <td>Context is everything. West Ham must win this ...</td>
+      <td>Simon Burnton</td>
+      <td>Upton Park</td>
+      <td>L Probert</td>
+      <td>[5-6, 4-1, 13-5]</td>
+      <td>1.833333</td>
+      <td>5.000000</td>
+      <td>3.6</td>
+      <td>2010-03-05</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Leicester</td>
-      <td>Brighton</td>
-      <td>Brendan Rodgers blamed naivety for the extraor...</td>
-      <td>Paul Doyle</td>
-      <td>King Power Stadium</td>
-      <td>Martin Atkinson</td>
-      <td>[8-5, 9-2, 12-5]</td>
-      <td>2.600000</td>
-      <td>5.500000</td>
-      <td>3.400000</td>
-      <td>2022-01-22</td>
+      <td>Everton</td>
+      <td>Hull City</td>
+      <td>Everton instantly lost the momentum of their p...</td>
+      <td>Andy Hunter</td>
+      <td>Goodison Park</td>
+      <td>L Mason</td>
+      <td>[2-5, 10-1, 15-4]</td>
+      <td>1.400000</td>
+      <td>11.000000</td>
+      <td>4.75</td>
+      <td>2010-03-05</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Manchester United</td>
-      <td>West Ham</td>
-      <td>This is a genuine six-pointer in which Manches...</td>
-      <td>Jamie Jackson</td>
-      <td>Old Trafford</td>
-      <td>Jon Moss</td>
-      <td>[10-11, 3-1, 11-4]</td>
+      <td>Wigan Athletic</td>
+      <td>Liverpool</td>
+      <td>This meets Rafael Benítez's criteria of "no mi...</td>
+      <td>Andy Hunter</td>
+      <td>DW Stadium</td>
+      <td>A Marriner</td>
+      <td>[5-1, 8-13, 3-1]</td>
+      <td>6.000000</td>
+      <td>1.615385</td>
+      <td>4.0</td>
+      <td>2010-03-05</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Arsenal</td>
+      <td>Burnley</td>
+      <td>Arsenal might look beyond the mere banking of ...</td>
+      <td>David Hytner</td>
+      <td>Emirates Stadium</td>
+      <td>A Wiley</td>
+      <td>[2-13, 22-1, 8-1]</td>
+      <td>1.153846</td>
+      <td>23.000000</td>
+      <td>9.0</td>
+      <td>2010-03-05</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Tottenham Hotspur</td>
+      <td>Everton</td>
+      <td>In an attempt to contain the virus that has cl...</td>
+      <td>Gregg Morgan</td>
+      <td>White Hart Lane</td>
+      <td>S Bennett</td>
+      <td>[10-11, 10-3, 12-5]</td>
       <td>1.909091</td>
-      <td>4.000000</td>
-      <td>3.750000</td>
-      <td>2022-01-21</td>
+      <td>4.333333</td>
+      <td>3.4</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Stoke City</td>
+      <td>Arsenal</td>
+      <td>Tony Pulis's team have been on something of a ...</td>
+      <td>Paul Doyle</td>
+      <td>Britannia Stadium</td>
+      <td>P Walton</td>
+      <td>[9-2, 8-11, 13-5]</td>
+      <td>5.500000</td>
+      <td>1.727273</td>
+      <td>3.6</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Sunderland</td>
+      <td>Fulham</td>
+      <td>Steve Bruce trusts Shakhtar Donetsk on Thursda...</td>
+      <td>Louise Taylor</td>
+      <td>Stadium of Light</td>
+      <td>M Atkinson</td>
+      <td>[5-4, 13-5, 23-10]</td>
+      <td>2.250000</td>
+      <td>3.600000</td>
+      <td>3.3</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Burnley</td>
+      <td>Portsmouth</td>
+      <td>When you have just gone into administration, y...</td>
+      <td>Tim Rich</td>
+      <td>Turf Moor</td>
+      <td>M Clattenburg</td>
+      <td>[6-5, 13-5, 12-5]</td>
+      <td>2.200000</td>
+      <td>3.600000</td>
+      <td>3.4</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Bolton Wanderers</td>
+      <td>Wolverhampton Wanderers</td>
+      <td>Bolton received a more positive estimate on ce...</td>
+      <td>Richard Gibson</td>
+      <td>Reebok Stadium</td>
+      <td>A Marriner</td>
+      <td>[10-11, 10-3, 12-5]</td>
+      <td>1.909091</td>
+      <td>4.333333</td>
+      <td>3.4</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Chelsea</td>
+      <td>Manchester City</td>
+      <td>When Wayne Meets John has assumed the proporti...</td>
+      <td>David Hytner</td>
+      <td>Stamford Bridge</td>
+      <td>M Dean</td>
+      <td>[7-1, 7-2]</td>
+      <td>8.000000</td>
+      <td>4.500000</td>
+      <td>n/a</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Birmingham City</td>
+      <td>Wigan Athletic</td>
+      <td>Birmingham's surge into the top half of the ta...</td>
+      <td>David Lacey</td>
+      <td>St Andrew's</td>
+      <td>A Taylor</td>
+      <td>[10-11, 10-3, 12-5]</td>
+      <td>1.909091</td>
+      <td>4.333333</td>
+      <td>3.4</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Liverpool</td>
+      <td>Blackburn Rovers</td>
+      <td>Rafael Benítez could take encouragement from t...</td>
+      <td>Andy Hunter</td>
+      <td>Anfield</td>
+      <td>A Wiley</td>
+      <td>[2-5, 9-1, 15-4]</td>
+      <td>1.400000</td>
+      <td>10.000000</td>
+      <td>4.75</td>
+      <td>2010-02-26</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Wolverhampton Wanderers</td>
+      <td>Chelsea</td>
+      <td>Mick McCarthy today described Chelsea as "argu...</td>
+      <td>John Ashdown</td>
+      <td>Molineux</td>
+      <td>K Friend</td>
+      <td>[11-1, 4-11, 9-2]</td>
+      <td>12.000000</td>
+      <td>1.363636</td>
+      <td>5.5</td>
+      <td>2010-02-19</td>
     </tr>
   </tbody>
 </table>
@@ -426,7 +566,7 @@ extract_previews(self,page)
 scraper = ScrapingTheGuardian()
 all_previews =[]
 last_page = False
-while True and last_page == False : 
+while last_page == False : 
     page = Parser.parse_page(url,scraper.session)
     previews_infos = scraper.extract_previews(page)
     all_previews.append(previews_infos)
