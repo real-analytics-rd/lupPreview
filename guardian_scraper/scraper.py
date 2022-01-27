@@ -182,7 +182,8 @@ class PageExtractor:
         # {{Team A v Team B : Squad sheets}}
         # We remove text before or after team names
         pattern = re.compile(
-            "Squad Sheets:|: Squad sheets|: match preview", re.IGNORECASE
+            "Squad Sheets:|: Squad[\s]sheets|Squad sheets|Squad sheet:|: match preview",
+            re.IGNORECASE,
         )
         preview_title = pattern.sub("", title).strip()
         # Names are located in the title of the preview
@@ -368,7 +369,7 @@ class ScrapingTheGuardian:
     # venue, referee, odds pattern regex
     # in some previews, all of the information is on the same line.
     VENUE_REGEX = "Venue(.*)Tickets|Venue(.*),|Venue(.*)"
-    REFEREE_REGEX = "Referee(.*)Last season's|Referee(.*)Odds|Referee(.*)|Ref(.*)Odds"
+    REFEREE_REGEX = "Referee(.*)This season's|Referee(.*)Last season's|Referee(.*)Odds|Referee(.*)|Ref(.*)Odds"
     # {Odds H 11-8 A 11-8 D 11-8}
     # {Odds Liverpool 11-8 Aston Villa 11-8 Draw 11-8}
     # missing label {Odds H 11-8 11-8 D 11-8}
@@ -537,7 +538,7 @@ class ScrapingTheGuardian:
             # Champions league and Cups are not allowed
             preview_title = preview_page.find("h1").text
             # Check if "cup" or "Champions league" exists in:
-            # title, link, preview topic section and preview aside section
+            # title, link, preview topic section,preview aside section
             # we pick preview topic
             try:
                 preview_topic = preview_page.find("div", {"class": "dcr-lwa3gj"}).text
@@ -556,7 +557,7 @@ class ScrapingTheGuardian:
                 ).text
             # if the preview is not a cup or not for Champions league:
             # we proceed the extraction
-            # we pick preview topic
+
             not_premier_league_found = False
             eliminated_matches = ["Champions League", "champions-league", "cup"]
             for word in eliminated_matches:
@@ -576,8 +577,14 @@ class ScrapingTheGuardian:
                 if re.search(word, preview_aside, re.IGNORECASE):
                     not_premier_league_found = True
                     break
+            # some previews include the type of competition in the text
+            # we find FA Cup – Kick-off
+            # so we want to eliminate these previews
+            cup_in_text = PageExtractor.get_values_matching_regex(
+                preview_page, "FA Cup – Kick-off"
+            )
 
-            if not not_premier_league_found:
+            if not not_premier_league_found and not cup_in_text:
                 preview_items = ScrapingTheGuardian.extract_preview_items(
                     preview_page, preview_title
                 )

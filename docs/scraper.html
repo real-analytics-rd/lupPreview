@@ -31,6 +31,68 @@ nb_path: "00_scraper.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<div style="font-size: 200px">
+
+<table>
+<thead><tr>
+<th>Issues</th>
+<th>Solutions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4 possible formats for previews(old format, new format,Cup's format and a particular format)</td>
+<td>Select the appropriate html tags</td>
+</tr>
+<tr>
+<td>Preview titles are not the same ( we can find Squad Sheets or match preview)</td>
+<td>Pick only the names of the teams and eliminate the rest</td>
+</tr>
+<tr>
+<td>The date of the match is not always available</td>
+<td>Pick the preview date</td>
+</tr>
+<tr>
+<td>The order of the elements and labels are not the same</td>
+<td>Using regex patterns to get information</td>
+</tr>
+<tr>
+<td>Missing values for betting odds</td>
+<td>We treat the general case separately and we set up specific regex patterns for these particular cases</td>
+</tr>
+<tr>
+<td>Odds format is different</td>
+<td>We treat the general case separately and we set up specific regex patterns for these particular cases</td>
+</tr>
+<tr>
+<td>We can find non-numeric values for Odds like (Evens,evens,Eve)</td>
+<td>Replace evens by 1-1</td>
+</tr>
+<tr>
+<td>There are some previews that don't have author and text</td>
+<td>For previews that have no text, we put 'n/a' (not available)</td>
+</tr>
+<tr>
+<td>The existence of previews for the FA CUP,Carabao Cup,Champions league,World Cup</td>
+<td>Filter previews by title,link,topic,aside html section and preview text and allow only Premier League previews</td>
+</tr>
+<tr>
+<td>We are not sure if the names of the teams are the same as the ones in Opta</td>
+<td>Set up a dictionary or check manually to map teams to their IDs</td>
+</tr>
+<tr>
+<td>When we send many requests, the guardian server blocks your IP address, which is interpreted as a DDOS attack</td>
+<td>Do a sleep of a random x seconds between requests or change your IP and work with rotating proxy</td>
+</tr>
+</tbody>
+</table>
+<p>&lt;/div &gt;</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Import-Libraries-and-Modules">Import Libraries and Modules<a class="anchor-link" href="#Import-Libraries-and-Modules"> </a></h3>
 </div>
 </div>
@@ -162,7 +224,7 @@ extract_match_infos(page, venue_regex, referee_regex, odds_regex)
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="PageExtractor-Class">PageExtractor Class<a class="anchor-link" href="#PageExtractor-Class"> </a></h3><h5 id="This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-3-functions:">This class represents a scraper from the "Guardian" website and has 3 functions:<a class="anchor-link" href="#This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-3-functions:"> </a></h5><p>1- <b> calculate_betting_odds </b> returns decimal odds.</p>
+<h3 id="ScrapingTheGuardian-Class">ScrapingTheGuardian Class<a class="anchor-link" href="#ScrapingTheGuardian-Class"> </a></h3><h5 id="This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-3-functions:">This class represents a scraper from the "Guardian" website and has 3 functions:<a class="anchor-link" href="#This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-3-functions:"> </a></h5><p>1- <b> calculate_betting_odds </b> returns decimal odds.</p>
 <p>&emsp;In this section, we will calculate the odds derived from the football preview.
 <br>&emsp;Considering the following example:
 <br>&emsp;&emsp; ["9-20","29-5","6-5"] 
@@ -195,7 +257,7 @@ extract_match_infos(page, venue_regex, referee_regex, odds_regex)
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L341" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
+<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L342" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
 </blockquote>
 <p>A class to represent a scraper from the "Guardian" website.</p>
 <p>...</p>
@@ -244,7 +306,7 @@ extract_previews(self,page)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews?page=200&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews?page=140&quot;</span>
 <span class="n">scraper</span> <span class="o">=</span> <span class="n">ScrapingTheGuardian</span><span class="p">()</span>
 <span class="n">previews_infos</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">parse_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">scraper</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
@@ -336,213 +398,269 @@ extract_previews(self,page)
   <tbody>
     <tr>
       <th>0</th>
-      <td>Birmingham City</td>
-      <td>Everton</td>
-      <td>Try telling these clubs that the Europa League...</td>
-      <td>Sachin Nakrani</td>
-      <td>St Andrew's</td>
-      <td>L Probert</td>
-      <td>[2-1, 5-4, 12-5]</td>
-      <td>3.000000</td>
-      <td>2.250000</td>
-      <td>3.4</td>
-      <td>2010-03-12</td>
+      <td>Liverpool</td>
+      <td>Queens Park Rangers</td>
+      <td>Try telling Jamie Carragher that nothing is ri...</td>
+      <td>Andy Hunter</td>
+      <td>Anfield</td>
+      <td>Martin Atkinson</td>
+      <td>[1-4, 12-1, 11-2]</td>
+      <td>1.250000</td>
+      <td>13.000000</td>
+      <td>6.500000</td>
+      <td>2013-05-17</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Tottenham Hotspur</td>
-      <td>Blackburn Rovers</td>
-      <td>A lunchtime kick-off gives Tottenham a chance ...</td>
-      <td>David Lacey</td>
-      <td>White Hart Lane</td>
-      <td>H Webb</td>
-      <td>[5-11, 15-2, 10-3]</td>
-      <td>1.454545</td>
-      <td>8.500000</td>
-      <td>4.333333</td>
-      <td>2010-03-12</td>
+      <td>Chelsea</td>
+      <td>Everton</td>
+      <td>This will be the last hurrah for both Rafael B...</td>
+      <td>Dominic Fifield</td>
+      <td>Stamford Bridge</td>
+      <td>Anthony Taylor</td>
+      <td>[7-10, 9-2, 3-1]</td>
+      <td>1.700000</td>
+      <td>5.500000</td>
+      <td>4.000000</td>
+      <td>2013-05-17</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>West Ham United</td>
-      <td>Bolton Wanderers</td>
-      <td>Context is everything. West Ham must win this ...</td>
-      <td>Simon Burnton</td>
-      <td>Upton Park</td>
-      <td>L Probert</td>
-      <td>[5-6, 4-1, 13-5]</td>
-      <td>1.833333</td>
-      <td>5.000000</td>
-      <td>3.6</td>
-      <td>2010-03-05</td>
+      <td>Manchester City</td>
+      <td>Norwich City</td>
+      <td>Now that Roberto Mancini has been sacked by Ma...</td>
+      <td>Jamie Jackson</td>
+      <td>Carrow Road</td>
+      <td>Mark Halsey</td>
+      <td>[4-11, 11-1, 9-2]</td>
+      <td>1.363636</td>
+      <td>12.000000</td>
+      <td>5.500000</td>
+      <td>2013-05-17</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Everton</td>
-      <td>Hull City</td>
-      <td>Everton instantly lost the momentum of their p...</td>
-      <td>Andy Hunter</td>
-      <td>Goodison Park</td>
-      <td>L Mason</td>
-      <td>[2-5, 10-1, 15-4]</td>
-      <td>1.400000</td>
-      <td>11.000000</td>
-      <td>4.75</td>
-      <td>2010-03-05</td>
+      <td>Manchester United</td>
+      <td>Swansea City</td>
+      <td>Playing away at Manchester United in the Premi...</td>
+      <td>Rich Flower</td>
+      <td>Old Trafford</td>
+      <td>Jon Moss</td>
+      <td>[1-3, 11-1, 19-4]</td>
+      <td>1.333333</td>
+      <td>12.000000</td>
+      <td>5.750000</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Wigan Athletic</td>
-      <td>Liverpool</td>
-      <td>This meets Rafael Benítez's criteria of "no mi...</td>
-      <td>Andy Hunter</td>
-      <td>DW Stadium</td>
-      <td>A Marriner</td>
-      <td>[5-1, 8-13, 3-1]</td>
-      <td>6.000000</td>
-      <td>1.615385</td>
-      <td>4.0</td>
-      <td>2010-03-05</td>
+      <td>Stoke City</td>
+      <td>Tottenham Hotspur</td>
+      <td>Tottenham travel to the Britannia Stadium to f...</td>
+      <td>Alex Sutch</td>
+      <td>Britannia Stadium</td>
+      <td>Kevin Friend</td>
+      <td>[7-2, 10-11, 13-5]</td>
+      <td>4.500000</td>
+      <td>1.909091</td>
+      <td>3.600000</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>Arsenal</td>
-      <td>Burnley</td>
-      <td>Arsenal might look beyond the mere banking of ...</td>
-      <td>David Hytner</td>
-      <td>Emirates Stadium</td>
-      <td>A Wiley</td>
-      <td>[2-13, 22-1, 8-1]</td>
-      <td>1.153846</td>
-      <td>23.000000</td>
-      <td>9.0</td>
-      <td>2010-03-05</td>
+      <td>Fulham</td>
+      <td>Liverpool</td>
+      <td>Four defeats in a row, the most recent of whic...</td>
+      <td>Sachin Nakrani</td>
+      <td>Craven Cottage</td>
+      <td>Mark Halsey</td>
+      <td>[3-1, 10-11, 13-5]</td>
+      <td>4.000000</td>
+      <td>1.909091</td>
+      <td>3.600000</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>6</th>
-      <td>Tottenham Hotspur</td>
-      <td>Everton</td>
-      <td>In an attempt to contain the virus that has cl...</td>
-      <td>Gregg Morgan</td>
-      <td>White Hart Lane</td>
-      <td>S Bennett</td>
-      <td>[10-11, 10-3, 12-5]</td>
-      <td>1.909091</td>
-      <td>4.333333</td>
-      <td>3.4</td>
-      <td>2010-02-26</td>
+      <td>Norwich City</td>
+      <td>West Bromwich Albion</td>
+      <td>Norwich are not in turmoil, according to their...</td>
+      <td>Rich Flower</td>
+      <td>Carrow Road</td>
+      <td>Howard Webb</td>
+      <td>[6-5, 5-2, 5-2]</td>
+      <td>2.200000</td>
+      <td>3.500000</td>
+      <td>3.500000</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>7</th>
-      <td>Stoke City</td>
-      <td>Arsenal</td>
-      <td>Tony Pulis's team have been on something of a ...</td>
-      <td>Paul Doyle</td>
-      <td>Britannia Stadium</td>
-      <td>P Walton</td>
-      <td>[9-2, 8-11, 13-5]</td>
-      <td>5.500000</td>
-      <td>1.727273</td>
-      <td>3.6</td>
-      <td>2010-02-26</td>
+      <td>Everton</td>
+      <td>West Ham United</td>
+      <td>David Moyes should receive a rousing and emoti...</td>
+      <td>Andy Hunter</td>
+      <td>Goodison Park</td>
+      <td>Mike Jones</td>
+      <td>[8-15, 13-2, 10-3]</td>
+      <td>1.533333</td>
+      <td>7.500000</td>
+      <td>4.333333</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>8</th>
-      <td>Sunderland</td>
-      <td>Fulham</td>
-      <td>Steve Bruce trusts Shakhtar Donetsk on Thursda...</td>
-      <td>Louise Taylor</td>
-      <td>Stadium of Light</td>
-      <td>M Atkinson</td>
-      <td>[5-4, 13-5, 23-10]</td>
-      <td>2.250000</td>
-      <td>3.600000</td>
-      <td>3.3</td>
-      <td>2010-02-26</td>
+      <td>Queens Park Rangers</td>
+      <td>Newcastle United</td>
+      <td>Newcastle United felt a little sore that their...</td>
+      <td>David Hytner</td>
+      <td>Loftus Road</td>
+      <td>Lee Probert</td>
+      <td>[12-5, 13-10, 12-5]</td>
+      <td>3.400000</td>
+      <td>2.300000</td>
+      <td>3.400000</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>9</th>
-      <td>Burnley</td>
-      <td>Portsmouth</td>
-      <td>When you have just gone into administration, y...</td>
-      <td>Tim Rich</td>
-      <td>Turf Moor</td>
-      <td>M Clattenburg</td>
-      <td>[6-5, 13-5, 12-5]</td>
-      <td>2.200000</td>
-      <td>3.600000</td>
-      <td>3.4</td>
-      <td>2010-02-26</td>
+      <td>Aston Villa</td>
+      <td>Chelsea</td>
+      <td>With Chelsea chasing a top-four finish and Ast...</td>
+      <td>Stuart James</td>
+      <td>Villa Park</td>
+      <td>Lee Mason</td>
+      <td>[7-2, 10-11, 14-5]</td>
+      <td>4.500000</td>
+      <td>1.909091</td>
+      <td>3.800000</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>10</th>
-      <td>Bolton Wanderers</td>
-      <td>Wolverhampton Wanderers</td>
-      <td>Bolton received a more positive estimate on ce...</td>
-      <td>Richard Gibson</td>
-      <td>Reebok Stadium</td>
-      <td>A Marriner</td>
-      <td>[10-11, 10-3, 12-5]</td>
-      <td>1.909091</td>
-      <td>4.333333</td>
-      <td>3.4</td>
-      <td>2010-02-26</td>
+      <td>Sunderland</td>
+      <td>Southampton</td>
+      <td>Who, back in August, would have guessed that S...</td>
+      <td>Louise Taylor</td>
+      <td>Stadium of Light</td>
+      <td>Mike Dean</td>
+      <td>[9-5, 15-8, 9-4]</td>
+      <td>2.800000</td>
+      <td>2.875000</td>
+      <td>3.250000</td>
+      <td>2013-05-10</td>
     </tr>
     <tr>
       <th>11</th>
-      <td>Chelsea</td>
-      <td>Manchester City</td>
-      <td>When Wayne Meets John has assumed the proporti...</td>
+      <td>Tottenham Hotspur</td>
+      <td>Southampton</td>
+      <td>It has been a good week for Gareth Bale, what ...</td>
       <td>David Hytner</td>
-      <td>Stamford Bridge</td>
-      <td>M Dean</td>
-      <td>[7-1, 7-2]</td>
-      <td>8.000000</td>
-      <td>4.500000</td>
-      <td>n/a</td>
-      <td>2010-02-26</td>
+      <td>White Hart Lane</td>
+      <td>P Dowd</td>
+      <td>[4-9, 6-1, 10-3]</td>
+      <td>1.444444</td>
+      <td>7.000000</td>
+      <td>4.333333</td>
+      <td>2013-05-03</td>
     </tr>
     <tr>
       <th>12</th>
-      <td>Birmingham City</td>
-      <td>Wigan Athletic</td>
-      <td>Birmingham's surge into the top half of the ta...</td>
-      <td>David Lacey</td>
-      <td>St Andrew's</td>
-      <td>A Taylor</td>
-      <td>[10-11, 10-3, 12-5]</td>
-      <td>1.909091</td>
-      <td>4.333333</td>
-      <td>3.4</td>
-      <td>2010-02-26</td>
+      <td>Sunderland</td>
+      <td>Stoke City</td>
+      <td>Back in August, Paolo Di Canio, then managing ...</td>
+      <td>Louise Taylor</td>
+      <td>Stadium of Light</td>
+      <td>L Mason</td>
+      <td>[1-1, 3-1, 11-5]</td>
+      <td>2.000000</td>
+      <td>4.000000</td>
+      <td>3.200000</td>
+      <td>2013-05-03</td>
     </tr>
     <tr>
       <th>13</th>
-      <td>Liverpool</td>
-      <td>Blackburn Rovers</td>
-      <td>Rafael Benítez could take encouragement from t...</td>
-      <td>Andy Hunter</td>
-      <td>Anfield</td>
-      <td>A Wiley</td>
-      <td>[2-5, 9-1, 15-4]</td>
-      <td>1.400000</td>
-      <td>10.000000</td>
-      <td>4.75</td>
-      <td>2010-02-26</td>
+      <td>Norwich City</td>
+      <td>Aston Villa</td>
+      <td>The focus ahead of this game is on Aston Villa...</td>
+      <td>Lawrence Ostlere</td>
+      <td>Carrow Road</td>
+      <td>K Friend</td>
+      <td>[7-5, 15-8, 23-10]</td>
+      <td>2.400000</td>
+      <td>2.875000</td>
+      <td>3.300000</td>
+      <td>2013-05-03</td>
     </tr>
     <tr>
       <th>14</th>
-      <td>Wolverhampton Wanderers</td>
-      <td>Chelsea</td>
-      <td>Mick McCarthy today described Chelsea as "argu...</td>
-      <td>John Ashdown</td>
-      <td>Molineux</td>
-      <td>K Friend</td>
-      <td>[11-1, 4-11, 9-2]</td>
-      <td>12.000000</td>
-      <td>1.363636</td>
-      <td>5.5</td>
-      <td>2010-02-19</td>
+      <td>West Bromwich Albion</td>
+      <td>Wigan Athletic</td>
+      <td>Wigan's attempt to repeat their perennial esca...</td>
+      <td>Lawrence Ostlere</td>
+      <td>The Hawthorns</td>
+      <td>L Probert</td>
+      <td>[13-10, 2-1, 12-5]</td>
+      <td>2.300000</td>
+      <td>3.000000</td>
+      <td>3.400000</td>
+      <td>2013-05-03</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>West Ham United</td>
+      <td>Newcastle United</td>
+      <td>Not many would have predicted at the start of ...</td>
+      <td>Lawrence Ostlere</td>
+      <td>Upton Park</td>
+      <td>C Foy</td>
+      <td>[13-10, 2-1, 23-10]</td>
+      <td>2.300000</td>
+      <td>3.000000</td>
+      <td>3.300000</td>
+      <td>2013-05-03</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Fulham</td>
+      <td>Reading</td>
+      <td>This has the distinct feeling of a Premier Lea...</td>
+      <td>Lawrence Ostlere</td>
+      <td>Craven Cottage</td>
+      <td>N Swarbrick</td>
+      <td>[8-11, 4-1, 13-5]</td>
+      <td>1.727273</td>
+      <td>5.000000</td>
+      <td>3.600000</td>
+      <td>2013-05-03</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Queens Park Rangers</td>
+      <td>Arsenal</td>
+      <td>The game is up for Queens Park Rangers in the ...</td>
+      <td>Dominic Fifield</td>
+      <td>Loftus Road</td>
+      <td>J Moss</td>
+      <td>[7-1, 2-5, 7-2]</td>
+      <td>8.000000</td>
+      <td>1.400000</td>
+      <td>4.500000</td>
+      <td>2013-05-03</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>Swansea City</td>
+      <td>Manchester City</td>
+      <td>The Capital One Cup hangover appears to have w...</td>
+      <td>Lawrence Ostlere</td>
+      <td>Liberty Stadium</td>
+      <td>M Jones</td>
+      <td>[15-4, 3-4, 13-5]</td>
+      <td>4.750000</td>
+      <td>1.750000</td>
+      <td>3.600000</td>
+      <td>2013-05-03</td>
     </tr>
   </tbody>
 </table>
