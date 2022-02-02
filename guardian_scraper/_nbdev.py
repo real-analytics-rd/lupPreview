@@ -4,7 +4,10 @@ __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"Parser": "00_scraper.ipynb",
          "PageExtractor": "00_scraper.ipynb",
-         "ScrapingTheGuardian": "00_scraper.ipynb"}
+         "ScrapingTheGuardian": "00_scraper.ipynb",
+         "PreviewsMapping": "00_scraper.ipynb",
+         "Previews": "00_scraper.ipynb",
+         "MongoClient": "00_scraper.ipynb"}
 
 modules = ["scraper.py"]
 
