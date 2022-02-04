@@ -124,7 +124,7 @@ nb_path: "00_scraper.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="Parser" class="doc_header"><code>class</code> <code>Parser</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L23" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Parser</code>()</p>
+<h2 id="Parser" class="doc_header"><code>class</code> <code>Parser</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L25" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Parser</code>()</p>
 </blockquote>
 <p>A class to represent previews pages parser.</p>
 <p>...</p>
@@ -193,7 +193,7 @@ If we were successful in obtaining the date, it will <br>&emsp; be returned. Oth
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="PageExtractor" class="doc_header"><code>class</code> <code>PageExtractor</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L133" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PageExtractor</code>()</p>
+<h2 id="PageExtractor" class="doc_header"><code>class</code> <code>PageExtractor</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L135" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PageExtractor</code>()</p>
 </blockquote>
 <p>A class to represent an information extractor from a football preview.</p>
 <p>...</p>
@@ -241,7 +241,9 @@ extract_match_infos(page, venue_regex, referee_regex, odds_regex)
 <br>&emsp;But first, we use the <b>calculate_betting_odds</b> function to calculate the sports odds for the home team's victory, the away team's victory, and a draw.</p>
 <p>"home team","away team","text","author","venue","referee","odds","odds home team","odds away team","odds draw", "preview date","preview_link" are the returned values.</p>
 <p>3- <b> save_previews_locally </b> save all browsed previews in a local folder.</p>
-<p>&emsp;For a given page, we retrieve all the previews and go through them one by one, taking the link, title, subject, and aside section.
+<p>&emsp;we verify if we have reached the last extracted preview date,
+if yes, we will stop the scraper
+<br>&emsp;For a given page, we retrieve all the previews and go through them one by one, taking the link, title, subject, and aside section.
 <br>&emsp;if the words "cup" or "champions league" do not belong in these sections, we save the preview in a local folder
 <br>&emsp;Otherwise, we move on to the next preview.
 <br>&emsp;The <b>store_page_locally</b> function, will be called here to save the preview page.</p>
@@ -262,7 +264,7 @@ extract_match_infos(page, venue_regex, referee_regex, odds_regex)
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L383" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
+<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L387" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
 </blockquote>
 <p>A class to represent a scraper from the "Guardian" website.</p>
 <p>...</p>
@@ -278,7 +280,7 @@ ODDS_REGEX : str
     returns decimal odds.
 extract_preview_items(page,title)
     returns all information of a football preview.
-save_previews_locally(self,page)
+save_previews_locally(self,page,last_date_stop,last_preview)
     save all browsed previews in a local folder.
 extract_previews_information(self,folder_path)
     returns all the information of all local previews.</p>
@@ -304,12 +306,12 @@ extract_previews_information(self,folder_path)
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="PreviewsMapping-Class">PreviewsMapping Class<a class="anchor-link" href="#PreviewsMapping-Class"> </a></h3><h5 id="This-class-represents-a-mapper-from-the-&quot;Opta&quot;-MongoDb-database-and-has-3-functions:">This class represents a mapper from the "Opta" MongoDb database and has 3 functions:<a class="anchor-link" href="#This-class-represents-a-mapper-from-the-&quot;Opta&quot;-MongoDb-database-and-has-3-functions:"> </a></h5><p>1- <b> get_team_id </b> returns the "opta" ID of a given team.</p>
 <p>&emsp;The use of a predefined dictionary containing the teams and their various names facilitates us in matching the team names extracted from the guardian and <br>&emsp;their IDs in the opta database. The use of a dictionary was required because the team names in the previews differ and sometimes use abbreviations or<br>&emsp;nicknames.</p>
-<p>2- <b> get_game_id </b>returns the id and the date of a given game.</p>
+<p>2- <b> get_game_id_date </b>returns the id and the date of a given game.</p>
 <p>&emsp;After completing the scraping task and extracting the information, the previews must be matched with their ids in the opta.fixture database.
 We will query this <br>&emsp;database by specifying the home team, the away team, the closest gamedate to the preview publication date, and the Premier League competitionId, which  <br>&emsp;is equal to 8 in the database.</p>
 <p>3- <b> save_mapped_data </b> save all the mapped previews in a MongoDb collection.</p>
 <p>&emsp;For each preview in the data extracted from the Guardian, we will look for the id of the home team and the away team and match it with the <b>opta.fixture</b><br>&emsp;database to get the gameID and gameDate and finally we save it in a MongoDb collection.
-<br>&emsp;To complete our mission, we will call the last two functions <b> get_team_id </b> and <b>get_game_id</b>.</p>
+<br>&emsp;To complete our mission, we will call the last two functions <b> get_team_id </b> and <b>get_game_id_date</b>.</p>
 
 </div>
 </div>
@@ -325,7 +327,7 @@ We will query this <br>&emsp;database by specifying the home team, the away team
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="PreviewsMapping" class="doc_header"><code>class</code> <code>PreviewsMapping</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L688" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PreviewsMapping</code>()</p>
+<h2 id="PreviewsMapping" class="doc_header"><code>class</code> <code>PreviewsMapping</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L716" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PreviewsMapping</code>()</p>
 </blockquote>
 <p>A class to represent a data mapper from a mongo database.</p>
 <p>...</p>
@@ -372,18 +374,18 @@ get_mapped_data(data,df_teams)
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="Previews" class="doc_header"><code>class</code> <code>Previews</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L862" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Previews</code>(<strong>*<code>args</code></strong>, <strong>**<code>values</code></strong>) :: <code>Document</code></p>
+<h2 id="Previews" class="doc_header"><code>class</code> <code>Previews</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L887" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Previews</code>(<strong>*<code>args</code></strong>, <strong>**<code>values</code></strong>) :: <code>Document</code></p>
 </blockquote>
 
 <pre><code>A class to represent the extracted previews from the guardian.
 
 </code></pre>
 <p>...</p>
-<h2 id="Attributes">Attributes<a class="anchor-link" href="#Attributes"> </a></h2><p>game_id : int
+<h2 id="Attributes">Attributes<a class="anchor-link" href="#Attributes"> </a></h2><p>gameId : int
     the opta game id
-home_team : str
+homeTeam : str
     home team name
-away_team : str
+awayTeam : str
     away_team name
 text : str
     preview text
@@ -395,17 +397,17 @@ referee : str
     match referee
 odds : str
     betting odds
-odds_home_team : float
+oddsHomeTeam : float
     decimal betting odds for home team
-odds_away_team : float
+oddsAwayTeam : float
     decimal betting odds for away team
-odds_draw : float
+oddsDraw : float
     decimal betting odds for draw
-game_date : datetime
+gameDate : datetime
     the date of the match
-preview_date : datetime
+previewDate : datetime
     the date of the preview
-preview_link : str
+previewLink : str
     the Guardian preview link</p>
 
 </div>
@@ -427,10 +429,12 @@ preview_link : str
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="MongoCLient-Class">MongoCLient Class<a class="anchor-link" href="#MongoCLient-Class"> </a></h3><h5 id="This-class-represents-a-MongoDb-Client-and-has-2-functions:">This class represents a MongoDb Client and has 2 functions:<a class="anchor-link" href="#This-class-represents-a-MongoDb-Client-and-has-2-functions:"> </a></h5><p>1- <b> find_credentials </b> returns the MongoDb credentials stored in a local file.</p>
+<h3 id="MongoCLient-Class">MongoCLient Class<a class="anchor-link" href="#MongoCLient-Class"> </a></h3><h5 id="This-class-represents-a-MongoDb-Client-and-has-4-functions:">This class represents a MongoDb Client and has 4 functions:<a class="anchor-link" href="#This-class-represents-a-MongoDb-Client-and-has-4-functions:"> </a></h5><p>1- <b> find_credentials </b> returns the MongoDb credentials stored in a local file.</p>
 <p>2- <b> connect </b>returns the MongoDb instance to connect to a given cluster.</p>
 <p>There are two database URIs in the credentials file, the first of which is for the "OPTA" Database.
 <br>The second is for another database that was created to store extracted previews.</p>
+<p>3- <b> save </b> save a MongoDb collection.</p>
+<p>4- <b> find </b> find a MongoDb query.</p>
 
 </div>
 </div>
@@ -446,7 +450,7 @@ preview_link : str
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="MongoClient" class="doc_header"><code>class</code> <code>MongoClient</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L918" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MongoClient</code>()</p>
+<h2 id="MongoClient" class="doc_header"><code>class</code> <code>MongoClient</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L942" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MongoClient</code>()</p>
 </blockquote>
 <p>A class to represent a MongoDb client.</p>
 <p>...</p>
@@ -455,7 +459,11 @@ preview_link : str
 <h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>find_credentials()
     returns MongoDb credentials stored in a local file.
 connect(index)
-    returns the mongoDb instance.</p>
+    returns the mongoDb instance.
+save(collection)
+    save the MongoDb collection.
+find(mongoengine_client,db,collection,game_filter,projection)
+    find a MongoDb query.</p>
 
 </div>
 
@@ -482,7 +490,7 @@ connect(index)
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Scraping-one-page-and-save-its-previews-in-local">Scraping one page and save its previews in local<a class="anchor-link" href="#Scraping-one-page-and-save-its-previews-in-local"> </a></h3>
+<h3 id="Scraping-all-pages-and-save-in-local">Scraping all pages and save in local<a class="anchor-link" href="#Scraping-all-pages-and-save-in-local"> </a></h3>
 </div>
 </div>
 </div>
@@ -494,77 +502,55 @@ connect(index)
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews&quot;</span>
+<span class="c1"># initialize the scraper instance.</span>
 <span class="n">scraper</span> <span class="o">=</span> <span class="n">ScrapingTheGuardian</span><span class="p">()</span>
-<span class="n">page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">parse_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="n">scraper</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
-<span class="n">previews_infos</span> <span class="o">=</span> <span class="n">scraper</span><span class="o">.</span><span class="n">save_previews_locally</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+<span class="c1"># initially we are not at the last page.</span>
+<span class="n">last_page</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1"># we&#39;ll extract the previews that haven&#39;t already been extracted.</span>
+<span class="n">last_preview</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="c1"># we specify the last preview date in the previews collection on which the scraper will be turned off.</span>
+<span class="n">mongoengine_client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
+<span class="n">projection</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;previewDate&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">MongoClient</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">mongoengine_client</span><span class="p">,</span> <span class="s2">&quot;opta&quot;</span><span class="p">,</span> <span class="s2">&quot;previews&quot;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">projection</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;previewDate&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;gameDate&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># if the database is empty we will scrap all pages</span>
+<span class="n">query</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">last_date_stop</span> <span class="o">=</span> <span class="n">query</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;previewDate&quot;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">last_date_stop</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># if we are not at the last page </span>
+<span class="c1"># and we haven&#39;t reached an extracted preview</span>
+<span class="c1"># we launch the scraper</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">last_page</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">last_preview</span><span class="p">:</span>
+    <span class="c1"># a random timer</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for </span><span class="si">{}</span><span class="s1"> seconds ...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+    <span class="c1"># wait time seconds</span>
+    <span class="n">sleep</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;The current page URL: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+    <span class="c1"># get the html format of the page containing previews</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">parse_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">scraper</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
+    <span class="c1"># launch the scraper , save previews in a local folder</span>
+    <span class="c1"># and get the first and last extracted preview date</span>
+    <span class="c1"># and if we are at the last preview or not</span>
+    <span class="n">last_preview</span> <span class="o">=</span> <span class="n">scraper</span><span class="o">.</span><span class="n">save_previews_locally</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">last_date_stop</span><span class="p">,</span> <span class="n">last_preview</span><span class="p">)</span>
+    <span class="c1"># get the url of the following page and verify if we are at the last page</span>
+    <span class="n">url</span><span class="p">,</span> <span class="n">last_page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">get_next_page</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>https://www.theguardian.com/football/2022/jan/22/crystal-palace-liverpool-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/22/leicester-brighton-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/22/arsenal-burnley-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/22/chelsea-tottenham-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/21/manchester-united-west-ham-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/21/southampton-manchester-city-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/21/brentford-wolves-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/21/everton-aston-villa-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/21/leeds-newcastle-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/15/west-ham-leeds-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/15/tottenham-arsenal-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/15/liverpool-brentford-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/14/newcastle-watford-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/14/manchester-city-chelsea-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/14/aston-villa-manchester-united-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/14/norwich-everton-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/14/wolves-southampton-match-preview-premeir-league
-https://www.theguardian.com/football/2022/jan/01/brentford-aston-villa-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/01/chelsea-liverpool-match-preview-premier-league
-https://www.theguardian.com/football/2022/jan/01/leeds-burnley-match-preview-premier-league
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
     {% endraw %}
 
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Scraping-all-pages-and-save-in-local">Scraping all pages and save in local<a class="anchor-link" href="#Scraping-all-pages-and-save-in-local"> </a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>url = "<a href="https://www.theguardian.com/football/series/match-previews">https://www.theguardian.com/football/series/match-previews</a>"
-scraper = ScrapingTheGuardian()
-last_page = False
-while not last_page : 
-    print(url)
-    page = Parser.parse_page(url,scraper.session)
-    previews_infos = scraper.save_previews_locally(page)
-    url, last_page = Parser.get_next_page(page)
-    time = random.randint(2, 60)
-    print("timer")
-    print(time)</p>
-
-<pre><code># wait time seconds
-sleep(time)</code></pre>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Extract-information-from-local-previews">Extract information from local previews<a class="anchor-link" href="#Extract-information-from-local-previews"> </a></h3>
@@ -592,47 +578,9 @@ sleep(time)</code></pre>
 
 <div class="output_area">
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;home_team&#39;: &#39;Crystal Palace&#39;, &#39;away_team&#39;: &#39;Liverpool&#39;, &#39;text&#39;: &#39;Liverpool have already dispelled most of the doubts about how they would cope while Mohamed Salah and Sadio Mané are at the Africa Cup of Nations. They are yet to lose without their star forwards but Jürgen Klopp knows there is no room for error if they are to maintain any hope of reeling in Manchester City. Crystal Palace have lost their past nine league meetings with Liverpool by an aggregate score of 27-5 but will be mightily relieved not to be facing Salah and Mané, as they have contributed 17 of those goals between them. Palace are boosted by Jordan Ayew’s early return following Ghana’s Afcon exit. Stephen Hollis&#39;, &#39;author&#39;: &#39;Stephen Hollis&#39;, &#39;venue&#39;: &#39;Selhurst Park&#39;, &#39;referee&#39;: &#39;Kevin Friend&#39;, &#39;odds&#39;: [&#39;5-1&#39;, &#39;8-13&#39;, &#39;10-3&#39;], &#39;odds_home_team&#39;: 6.0, &#39;odds_away_team&#39;: 1.6153846153846154, &#39;odds_draw&#39;: 4.333333333333334, &#39;preview_date&#39;: datetime.date(2022, 1, 22), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/22/crystal-palace-liverpool-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Newcastle&#39;, &#39;away_team&#39;: &#39;Watford&#39;, &#39;text&#39;: &#39;Moussa Sissoko returns to Newcastle in Watford’s midfield as Claudio Ranieri’s side aim to arrest a run of seven straight defeats in all competitions against a Newcastle side with only one win to their name. Both Eddie Howe and Ranieri accept a draw will not be good enough in a relegation skirmish being dubbed a 12-pointer. Much could hinge on the performance of two forwards, Newcastle’s £25m signing, Chris Wood, and Ranieri’s £3.6m leading scorer, Emmanuel Dennis. After this, 17th-placed Watford face two more of the bottom three in the next week, travelling to Burnley on Tuesday and entertaining Norwich on Friday. Louise Taylor&#39;, &#39;author&#39;: &#39;Louise Taylor&#39;, &#39;venue&#39;: &#39;St James’ Park&#39;, &#39;referee&#39;: &#39;Paul Tierney&#39;, &#39;odds&#39;: [&#39;19-17&#39;, &#39;27-10&#39;, &#39;27-10&#39;], &#39;odds_home_team&#39;: 2.1176470588235294, &#39;odds_away_team&#39;: 3.7, &#39;odds_draw&#39;: 3.7, &#39;preview_date&#39;: datetime.date(2022, 1, 14), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/14/newcastle-watford-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Manchester United&#39;, &#39;away_team&#39;: &#39;West Ham&#39;, &#39;text&#39;: &#39;This is a genuine six-pointer in which Manchester United can leapfrog West Ham into fourth if they win, whereas if David Moyes’ side take the spoils they will pull five points ahead of United. After Cristiano Ronaldo drew criticism for his visible unhappiness at being replaced during Wednesday’s win at Brentford there should be no surprise if, neck problem permitting, the 36-year-old sparkles against West Ham. Jamie Jackson&#39;, &#39;author&#39;: &#39;Jamie Jackson&#39;, &#39;venue&#39;: &#39;Old Trafford&#39;, &#39;referee&#39;: &#39;Jon Moss&#39;, &#39;odds&#39;: [&#39;10-11&#39;, &#39;3-1&#39;, &#39;11-4&#39;], &#39;odds_home_team&#39;: 1.9090909090909092, &#39;odds_away_team&#39;: 4.0, &#39;odds_draw&#39;: 3.75, &#39;preview_date&#39;: datetime.date(2022, 1, 21), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/21/manchester-united-west-ham-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Manchester City&#39;, &#39;away_team&#39;: &#39;Chelsea&#39;, &#39;text&#39;: &#39;Manchester City would surely finish off Chelsea’s title challenge if they beat them, as each would have 16 games remaining but the champions a 13-point advantage. Pep Guardiola has further Covid cases to contend with, though the manager has not revealed who they are. Thomas Tuchel is rated highly by Guardiola and, after Chelsea’s 1-0 defeat in the reverse fixture, Tuchel’s plan to turn the champions over on their own turf should fascinate. Jamie Jackson&#39;, &#39;author&#39;: &#39;Jamie Jackson&#39;, &#39;venue&#39;: &#39;Etihad Stadium&#39;, &#39;referee&#39;: &#39;Craig Pawson&#39;, &#39;odds&#39;: [&#39;8-11&#39;, &#39;22-5&#39;, &#39;3-1&#39;], &#39;odds_home_team&#39;: 1.7272727272727273, &#39;odds_away_team&#39;: 5.4, &#39;odds_draw&#39;: 4.0, &#39;preview_date&#39;: datetime.date(2022, 1, 14), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/14/manchester-city-chelsea-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Arsenal&#39;, &#39;away_team&#39;: &#39;Burnley&#39;, &#39;text&#39;: &#39;Arsenal have no excuses if their dismal form in cups continues in the league against Burnley. Mikel Arteta’s side may have struggled recently but they face a team bottom with only one win, recovering from numerous Covid cases and missing their best player, Maxwel Cornet. The Ivorian is into the last 16 of the Africa Cup of Nations with his country and his absence leaves Sean Dyche’s goal-shy side alarmingly short in attack. Arsenal may have shortcomings of their own thanks to the folly of Granit Xhaka and Thomas Partey receiving red cards in successive Carabao Cup matches against Liverpool but if they fail to return to winning ways on Sunday then the dream of returning to the Champions League could start to fade. Graham Searles&#39;, &#39;author&#39;: &#39;Graham Searles&#39;, &#39;venue&#39;: &#39;Emirates Stadium&#39;, &#39;referee&#39;: &#39;David Coote&#39;, &#39;odds&#39;: [&#39;2-5&#39;, &#39;9-1&#39;, &#39;4-1&#39;], &#39;odds_home_team&#39;: 1.4, &#39;odds_away_team&#39;: 10.0, &#39;odds_draw&#39;: 5.0, &#39;preview_date&#39;: datetime.date(2022, 1, 22), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/22/arsenal-burnley-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Brentford&#39;, &#39;away_team&#39;: &#39;Wolves&#39;, &#39;text&#39;: &#39;Wolves have arguably been the surprise package in the Premier League this seasonand a fourth victory in five league games for Bruno Lage’s side at Brentford would raise hopes of challenging for a European place. Wolves’ form has been built on a solid defence – conceding three in their past nine league games – and they will fancy their chances of another clean sheet against a Brentford side that have been struggling in attack with four goals in their past seven matches. Stephen Hollis&#39;, &#39;author&#39;: &#39;Stephen Hollis&#39;, &#39;venue&#39;: &#39;Brentford Community Stadium&#39;, &#39;referee&#39;: &#39;Peter Bankes&#39;, &#39;odds&#39;: [&#39;9-4&#39;, &#39;13-8&#39;, &#39;2-1&#39;], &#39;odds_home_team&#39;: 3.25, &#39;odds_away_team&#39;: 2.625, &#39;odds_draw&#39;: 3.0, &#39;preview_date&#39;: datetime.date(2022, 1, 21), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/21/brentford-wolves-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Everton&#39;, &#39;away_team&#39;: &#39;Aston Villa&#39;, &#39;text&#39;: &#39;The second caretaker coming of Duncan Ferguson has turned what would have been a toxic occasion under Rafael Benítez, and a gift for Aston Villa, into one of eager anticipation among Evertonians but a formidable task awaits the Scot all the same. He leads a team devoid of confidence after one win in 13 matches against improving opponents managed by someone well versed in spoiling the mood at Goodison Park, Steven Gerrard, and who has Lucas Digne and Philippe Coutinho at his disposal for good measure. As Chelsea discovered in Ferguson’s only previous home game, however, a raucous Goodison can inspire. Andy Hunter&#39;, &#39;author&#39;: &#39;Andy Hunter&#39;, &#39;venue&#39;: &#39;Goodison Park&#39;, &#39;referee&#39;: &#39;Craig Pawson&#39;, &#39;odds&#39;: [&#39;7-4&#39;, &#39;17-10&#39;, &#39;40-17&#39;], &#39;odds_home_team&#39;: 2.75, &#39;odds_away_team&#39;: 2.7, &#39;odds_draw&#39;: 3.3529411764705883, &#39;preview_date&#39;: datetime.date(2022, 1, 21), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/21/everton-aston-villa-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Wolves&#39;, &#39;away_team&#39;: &#39;Southampton&#39;, &#39;text&#39;: &#39;Southampton were excellent in their 4-1 stroll past Brentford and will arrive confident they can continue their rise up the table with another win at Molineux. However, Wolves are also enjoying a nice run of form and will hope Roman Saïss’s departure to the Africa Cup of Nations does not harm their ironclad defence. Only 14 goals conceded after 19 games is remarkable and Manchester City are the sole side who have a better record, with 13. Ralph Hasenhüttl will be meticulously planning how to break his opponents down and he can focus his side on this task as Wolves’ achilles heel is a lack of creativity. They have also scored only 14 goals and again only one side beat their tally, Norwich with eight. Graham Searles&#39;, &#39;author&#39;: &#39;Graham Searles&#39;, &#39;venue&#39;: &#39;Molineux&#39;, &#39;referee&#39;: &#39;Michael Salisbury&#39;, &#39;odds&#39;: [&#39;11-8&#39;, &#39;5-2&#39;, &#39;9-4&#39;], &#39;odds_home_team&#39;: 2.375, &#39;odds_away_team&#39;: 3.5, &#39;odds_draw&#39;: 3.25, &#39;preview_date&#39;: datetime.date(2022, 1, 14), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/14/wolves-southampton-match-preview-premeir-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Liverpool&#39;, &#39;away_team&#39;: &#39;Brentford&#39;, &#39;text&#39;: &#39;Albert Stubbins, the only footballer to feature on the cover of the Beatles’ Sgt. Pepper’s album, scored the winner when Liverpool last hosted Brentford at Anfield in the league. That was in October 1946. Seventy-six years on, Jürgen Klopp takes charge of Liverpool for the 350th time boasting the highest win percentage (60.74%) of any manager in the club’s league history. With Manchester City or Chelsea, or both, guaranteed to drop points when they meet on Saturday, Klopp will be desperately seeking an improvement on Thursday’s display against Arsenal to take advantage. Andy Hunter&#39;, &#39;author&#39;: &#39;Andy Hunter&#39;, &#39;venue&#39;: &#39;Anfield&#39;, &#39;referee&#39;: &#39;Jon Moss&#39;, &#39;odds&#39;: [&#39;1-3&#39;, &#39;21-2&#39;, &#39;5-1&#39;], &#39;odds_home_team&#39;: 1.3333333333333333, &#39;odds_away_team&#39;: 11.5, &#39;odds_draw&#39;: 6.0, &#39;preview_date&#39;: datetime.date(2022, 1, 15), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/15/liverpool-brentford-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;West Ham&#39;, &#39;away_team&#39;: &#39;Leeds&#39;, &#39;text&#39;: &#39;West Ham regained fourth place by beating Norwich on Wednesday and will hope to continue their winning run when they host Leeds. They saw them off in the FA Cup last week and Marcelo Bielsa’s side, who are eight points above the bottom three, still have a long injury list. Bielsa will hope Patrick Bamford and Rodrigo are back to lift his side’s attacking threat. West Ham, meanwhile, are sweating on Mark Noble and Tomas Soucek, with Kurt Zouma also pushing for a place on the bench. Jacob Steinberg&#39;, &#39;author&#39;: &#39;Jacob Steinberg&#39;, &#39;venue&#39;: &#39;London Stadium&#39;, &#39;referee&#39;: &#39;Mike Dean&#39;, &#39;odds&#39;: [&#39;4-6&#39;, &#39;43-10&#39;, &#39;3-1&#39;], &#39;odds_home_team&#39;: 1.6666666666666665, &#39;odds_away_team&#39;: 5.3, &#39;odds_draw&#39;: 4.0, &#39;preview_date&#39;: datetime.date(2022, 1, 15), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/15/west-ham-leeds-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Aston Villa&#39;, &#39;away_team&#39;: &#39;Manchester United&#39;, &#39;text&#39;: &#39;The extent of the problems Ralf Rangnick has inherited at Manchester United need to be put in perspective. The fortunate 1-0 win over Aston Villa in the FA Cup on Monday was the latest example of how disjointed the team are but also meant United have lost once in 10 games under their interim manager. Scoring goals remains a problem but the return of Cristiano Ronaldo and Jadon Sancho from injury should give them more of a cutting edge. Villa will be keen to avenge their Cup defeat and Steven Gerrard is expected to give Philippe Coutinho and Lucas Digne debuts. Stephen Hollis&#39;, &#39;author&#39;: &#39;Stephen Hollis&#39;, &#39;venue&#39;: &#39;Villa Park&#39;, &#39;referee&#39;: &#39;David Coote&#39;, &#39;odds&#39;: [&#39;2-1&#39;, &#39;19-13&#39;, &#39;13-5&#39;], &#39;odds_home_team&#39;: 3.0, &#39;odds_away_team&#39;: 2.4615384615384617, &#39;odds_draw&#39;: 3.6, &#39;preview_date&#39;: datetime.date(2022, 1, 14), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/14/aston-villa-manchester-united-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Leicester&#39;, &#39;away_team&#39;: &#39;Brighton&#39;, &#39;text&#39;: &#39;Brendan Rodgers blamed naivety for the extraordinary way Leicester allowed victory to turn into defeat against Tottenham on Wednesday, but his team are becoming old hands at shooting themselves in the foot. There is mitigation: they have been hampered by injuries all season and are still without a raft of key players. But they still need to wise up quickly if they are to retain hope of reaching Europe. Brighton have similar ambitions and are in much better form – all they need to do is sharpen their finishing and they could add to Leicester’s woes. Paul Doyle&#39;, &#39;author&#39;: &#39;Paul Doyle&#39;, &#39;venue&#39;: &#39;King Power Stadium&#39;, &#39;referee&#39;: &#39;Martin Atkinson&#39;, &#39;odds&#39;: [&#39;8-5&#39;, &#39;9-2&#39;, &#39;12-5&#39;], &#39;odds_home_team&#39;: 2.6, &#39;odds_away_team&#39;: 5.5, &#39;odds_draw&#39;: 3.4, &#39;preview_date&#39;: datetime.date(2022, 1, 22), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/22/leicester-brighton-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Leeds&#39;, &#39;away_team&#39;: &#39;Burnley&#39;, &#39;text&#39;: &#39;The bad news for Marcelo Bielsa and Leeds is that Kalvin Phillips, their England midfielder and anchor, and Liam Cooper, their captain and usually ever-present centre-half, will be absent injured until March. Patrick Bamford is set to return to the home attack, though, after hamstring trouble and, although Bielsa’s principal striker is expected to begin on the bench, he will doubtless be anxious to enter the fray and jog Sean Dyche’s memory. Bamford did not exactly see eye to eye with Burnley’s manager during a loan stint at Turf Moor and would surely revel in proving a point by scoring the winning goal. Louise Taylor&#39;, &#39;author&#39;: &#39;Louise Taylor&#39;, &#39;venue&#39;: &#39;Elland Road&#39;, &#39;referee&#39;: &#39;Kevin Friend&#39;, &#39;odds&#39;: [&#39;6-5&#39;, &#39;5-2&#39;, &#39;13-5&#39;], &#39;odds_home_team&#39;: 2.2, &#39;odds_away_team&#39;: 3.5, &#39;odds_draw&#39;: 3.6, &#39;preview_date&#39;: datetime.date(2022, 1, 1), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/01/leeds-burnley-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Leeds&#39;, &#39;away_team&#39;: &#39;Newcastle&#39;, &#39;text&#39;: &#39;Can Eddie Howe choreograph Newcastle’s second win of the season before their flight to Saudi Arabia for a warm-weather training camp on the Red Sea coast near Jeddah on Sunday? It will not be easy, particularly as Marcelo Bielsa knows victory would go a long way towards helping banish Leeds’ own, albeit latterly receding, relegation fears. A key subplot could involve a duel between Raphinha and Newcastle’s underrated left-back Paul Dummett, who impressed against Watford last Saturday on his return from a long-term injury. Louise Taylor&#39;, &#39;author&#39;: &#39;Louise Taylor&#39;, &#39;venue&#39;: &#39;Elland Road&#39;, &#39;referee&#39;: &#39;Chris Kavanagh&#39;, &#39;odds&#39;: [&#39;1-1&#39;, &#39;3-1&#39;, &#39;5-2&#39;], &#39;odds_home_team&#39;: 2.0, &#39;odds_away_team&#39;: 4.0, &#39;odds_draw&#39;: 3.5, &#39;preview_date&#39;: datetime.date(2022, 1, 21), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/21/leeds-newcastle-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Brentford&#39;, &#39;away_team&#39;: &#39;Aston Villa&#39;, &#39;text&#39;: &#39;Steven Gerrard returns to the touchline for Aston Villa after recovering from Covid but will be without the suspended Tyrone Mings as well as the injured Leon Bailey and Marvelous Nakamba. Ezri Konsa and Ollie Watkins are set to start against their former club. Depleted Brentford, looking to avoid a fourth consecutive defeat, can expect to have more possession than the 23% they managed in their midweek loss to Manchester City. Tim Knowles&#39;, &#39;author&#39;: &#39;Tim Knowles&#39;, &#39;venue&#39;: &#39;Brentford Community Stadium&#39;, &#39;referee&#39;: &#39;Craig Pawson&#39;, &#39;odds&#39;: [&#39;2-1&#39;, &#39;6-4&#39;, &#39;2-1&#39;], &#39;odds_home_team&#39;: 3.0, &#39;odds_away_team&#39;: 2.5, &#39;odds_draw&#39;: 3.0, &#39;preview_date&#39;: datetime.date(2022, 1, 1), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/01/brentford-aston-villa-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Norwich&#39;, &#39;away_team&#39;: &#39;Everton&#39;, &#39;text&#39;: &#39;If Norwich have any hope of staging an unlikely bid for survival it surely has to start with the visit of an Everton side in almost similarly dire straits. After taking five points from his first three matches, Dean Smith has presided over six consecutive Premier League defeats – failing to score a single goal. Everton have won once in their past 11 league games but Rafael Benítez will hope the signings of Nathan Patterson, Vitalii Mykolenko and Anwar El Ghazi will revitalise them along with the hoped-for returns to fitness of Dominic Calvert-Lewin, Yerry Mina and Richarlison. Stephen Hollis&#39;, &#39;author&#39;: &#39;Stephen Hollis&#39;, &#39;venue&#39;: &#39;Carrow Road&#39;, &#39;referee&#39;: &#39;Andy Madley&#39;, &#39;odds&#39;: [&#39;37-13&#39;, &#39;19-17&#39;, &#39;18-7&#39;], &#39;odds_home_team&#39;: 3.8461538461538463, &#39;odds_away_team&#39;: 2.1176470588235294, &#39;odds_draw&#39;: 3.5714285714285716, &#39;preview_date&#39;: datetime.date(2022, 1, 14), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/14/norwich-everton-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Southampton&#39;, &#39;away_team&#39;: &#39;Manchester City&#39;, &#39;text&#39;: &#39;Manchester City have won 12 league matches in succession and, in such irresistible form, look very likely to make it 13 at Southampton. A swathe of pundits believe City need to sign a striker before the window closes and possibly this would help Pep Guardiola finally get over the line in the Champions League, but domestically they are cruising to glory without the frivolities of an out-and-out No 9. In the process they are making the rest of the top flight rather red-faced as no one seems able to stop City’s Rube Goldberg goal machine. Ralph Hasenhüttl’s side will need to be supremely focussed from the off and that’s just to avoid a thrashing. Graham Searles&#39;, &#39;author&#39;: &#39;Graham Searles&#39;, &#39;venue&#39;: &#39;St Mary’s Stadium&#39;, &#39;referee&#39;: &#39;Simon Hooper&#39;, &#39;odds&#39;: [&#39;23-2&#39;, &#39;3-10&#39;, &#39;11-2&#39;], &#39;odds_home_team&#39;: 12.5, &#39;odds_away_team&#39;: 1.3, &#39;odds_draw&#39;: 6.5, &#39;preview_date&#39;: datetime.date(2022, 1, 21), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/21/southampton-manchester-city-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Tottenham&#39;, &#39;away_team&#39;: &#39;Arsenal&#39;, &#39;text&#39;: &#39;For the first time in a while more than just bragging rights are up for grabs in the north London derby. Arsenal head to the Tottenham Hotspur Stadium in fifth place and with genuine hope of forcing their way into the Champions League for the first time since the 2016-17 season. Tottenham sit two points behind them thanks to a run of eight league games undefeated since Antonio Conte’s appointment. Tottenham will be without Son Heung-min and Eric Dier while Granit Xhaka is suspended for Arsenal following his second red card of the season. Stephen Hollis&#39;, &#39;author&#39;: &#39; Stephen Hollis&#39;, &#39;venue&#39;: &#39;Tottenham Hotspur Stadium&#39;, &#39;referee&#39;: &#39;Chris Kavanagh&#39;, &#39;odds&#39;: [&#39;8-5&#39;, &#39;2-1&#39;, &#39;12-5&#39;], &#39;odds_home_team&#39;: 2.6, &#39;odds_away_team&#39;: 3.0, &#39;odds_draw&#39;: 3.4, &#39;preview_date&#39;: datetime.date(2022, 1, 15), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/15/tottenham-arsenal-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Chelsea&#39;, &#39;away_team&#39;: &#39;Tottenham&#39;, &#39;text&#39;: &#39;The dynamic has changed before Chelsea and Tottenham meet for the third time this month. Chelsea dominated their rivals in the Carabao Cup semi-finals but Thomas Tuchel’s side have stuttered in the league and Spurs are on a high after their dramatic win at Leicester. Harry Kane is scoring again and Antonio Conte, who remains unbeaten in the league since his arrival in north London, will sense a chance to drag his old team into a battle for a place in the top four. Jacob Steinberg&#39;, &#39;author&#39;: &#39;Jacob Steinberg&#39;, &#39;venue&#39;: &#39;Stamford Bridge&#39;, &#39;referee&#39;: &#39;Paul Tierney&#39;, &#39;odds&#39;: [&#39;13-18&#39;, &#39;9-2&#39;, &#39;13-4&#39;], &#39;odds_home_team&#39;: 1.7222222222222223, &#39;odds_away_team&#39;: 5.5, &#39;odds_draw&#39;: 4.25, &#39;preview_date&#39;: datetime.date(2022, 1, 22), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/22/chelsea-tottenham-match-preview-premier-league&#39;}
------------------------------------------------
-{&#39;home_team&#39;: &#39;Chelsea&#39;, &#39;away_team&#39;: &#39;Liverpool&#39;, &#39;text&#39;: &#39;After threatening a three-way title race, Chelsea and Liverpool both find themselves on the brink of dropping out of contention. Manchester City have opened up an imposing lead at the top of the table and can look on comfortably when their rivals meet at Stamford Bridge on Sunday afternoon. The champions will take some stopping from here. They have seen Liverpool pick up one point from their last two games and the signs are ominous for Chelsea. Thomas Tuchel has mounting injury problems at the back and is dealing with the fallout from Romelu Lukaku’s explosive interview. Jacob Steinberg&#39;, &#39;author&#39;: &#39;Jacob Steinberg&#39;, &#39;venue&#39;: &#39;Stamford Bridge&#39;, &#39;referee&#39;: &#39;Anthony Taylor&#39;, &#39;odds&#39;: [&#39;2-1&#39;, &#39;7-5&#39;, &#39;13-5&#39;], &#39;odds_home_team&#39;: 3.0, &#39;odds_away_team&#39;: 2.4, &#39;odds_draw&#39;: 3.6, &#39;preview_date&#39;: datetime.date(2022, 1, 1), &#39;preview_link&#39;: &#39;https://www.theguardian.com/football/2022/jan/01/chelsea-liverpool-match-preview-premier-league&#39;}
------------------------------------------------
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/home/meherkh/anaconda3/envs/Real_Analytics/lib/python3.7/site-packages/dateparser/date_parser.py:35: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  date_obj = stz.localize(date_obj)
 </pre>
 </div>
 </div>
@@ -716,379 +664,173 @@ sleep(time)</code></pre>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Crystal Palace</td>
-      <td>Liverpool</td>
-      <td>Liverpool have already dispelled most of the d...</td>
-      <td>Stephen Hollis</td>
-      <td>Selhurst Park</td>
-      <td>Kevin Friend</td>
-      <td>[5-1, 8-13, 10-3]</td>
-      <td>6.000000</td>
-      <td>1.615385</td>
-      <td>4.333333</td>
-      <td>2022-01-22</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Bolton Wanderers</td>
+      <td>Tottenham Hotspur</td>
+      <td>Old Trafford, where they have not won since 19...</td>
+      <td>Tim Rich</td>
+      <td>Reebok Stadium</td>
+      <td>M Jones</td>
+      <td>[13-5, 10-11, 23-10]</td>
+      <td>3.600000</td>
+      <td>1.909091</td>
+      <td>3.30</td>
+      <td>2009-10-02</td>
+      <td>https://www.theguardian.com/football/2009/oct/...</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Newcastle</td>
-      <td>Watford</td>
-      <td>Moussa Sissoko returns to Newcastle in Watford...</td>
-      <td>Louise Taylor</td>
-      <td>St James’ Park</td>
-      <td>Paul Tierney</td>
-      <td>[19-17, 27-10, 27-10]</td>
-      <td>2.117647</td>
-      <td>3.700000</td>
-      <td>3.700000</td>
-      <td>2022-01-14</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Manchester City</td>
+      <td>Hull City</td>
+      <td>Hull's previous visit to Eastlands ended in a ...</td>
+      <td>Jamie Jackson</td>
+      <td>City of Manchester Stadium</td>
+      <td>L Probert</td>
+      <td>[2-9, 10-1, 21-5]</td>
+      <td>1.222222</td>
+      <td>11.000000</td>
+      <td>5.20</td>
+      <td>2009-11-27</td>
+      <td>https://www.theguardian.com/football/2009/nov/...</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Manchester United</td>
-      <td>West Ham</td>
-      <td>This is a genuine six-pointer in which Manches...</td>
-      <td>Jamie Jackson</td>
-      <td>Old Trafford</td>
-      <td>Jon Moss</td>
-      <td>[10-11, 3-1, 11-4]</td>
-      <td>1.909091</td>
-      <td>4.000000</td>
-      <td>3.750000</td>
-      <td>2022-01-21</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Manchester City</td>
+      <td>Fulham</td>
+      <td>Mark Hughes will have half an eye on events at...</td>
+      <td>Chris Bell</td>
+      <td>City of Manchester Stadium</td>
+      <td>K Friend</td>
+      <td>[2-5, 13-2, 3-1]</td>
+      <td>1.400000</td>
+      <td>7.500000</td>
+      <td>4.00</td>
+      <td>2009-10-23</td>
+      <td>https://www.theguardian.com/football/2009/oct/...</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Manchester City</td>
-      <td>Chelsea</td>
-      <td>Manchester City would surely finish off Chelse...</td>
-      <td>Jamie Jackson</td>
-      <td>Etihad Stadium</td>
-      <td>Craig Pawson</td>
-      <td>[8-11, 22-5, 3-1]</td>
-      <td>1.727273</td>
-      <td>5.400000</td>
-      <td>4.000000</td>
-      <td>2022-01-14</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Sunderland</td>
+      <td>Everton</td>
+      <td>Confidence could well be in short supply with ...</td>
+      <td>Louise Taylor</td>
+      <td>Stadium of Light</td>
+      <td>M Atkinson</td>
+      <td>[13-10, 9-5, 11-5]</td>
+      <td>2.300000</td>
+      <td>2.800000</td>
+      <td>3.20</td>
+      <td>2009-12-24</td>
+      <td>https://www.theguardian.com/football/2009/dec/...</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Arsenal</td>
-      <td>Burnley</td>
-      <td>Arsenal have no excuses if their dismal form i...</td>
-      <td>Graham Searles</td>
-      <td>Emirates Stadium</td>
-      <td>David Coote</td>
-      <td>[2-5, 9-1, 4-1]</td>
-      <td>1.400000</td>
-      <td>10.000000</td>
-      <td>5.000000</td>
-      <td>2022-01-22</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Brentford</td>
-      <td>Wolves</td>
-      <td>Wolves have arguably been the surprise package...</td>
-      <td>Stephen Hollis</td>
-      <td>Brentford Community Stadium</td>
-      <td>Peter Bankes</td>
-      <td>[9-4, 13-8, 2-1]</td>
-      <td>3.250000</td>
-      <td>2.625000</td>
-      <td>3.000000</td>
-      <td>2022-01-21</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>Everton</td>
-      <td>Aston Villa</td>
-      <td>The second caretaker coming of Duncan Ferguson...</td>
-      <td>Andy Hunter</td>
-      <td>Goodison Park</td>
-      <td>Craig Pawson</td>
-      <td>[7-4, 17-10, 40-17]</td>
-      <td>2.750000</td>
+      <td>Fulham</td>
+      <td>Tottenham Hotspur</td>
+      <td>Teams are increasingly viewing trips to Craven...</td>
+      <td>Dominic Fifield</td>
+      <td>Craven Cottage</td>
+      <td>S Bennett</td>
+      <td>[17-10, 27-20, 9-4]</td>
       <td>2.700000</td>
-      <td>3.352941</td>
-      <td>2022-01-21</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>2.350000</td>
+      <td>3.25</td>
+      <td>2009-12-24</td>
+      <td>https://www.theguardian.com/football/2009/dec/...</td>
     </tr>
     <tr>
-      <th>7</th>
-      <td>Wolves</td>
-      <td>Southampton</td>
-      <td>Southampton were excellent in their 4-1 stroll...</td>
-      <td>Graham Searles</td>
-      <td>Molineux</td>
-      <td>Michael Salisbury</td>
-      <td>[11-8, 5-2, 9-4]</td>
-      <td>2.375000</td>
-      <td>3.500000</td>
-      <td>3.250000</td>
-      <td>2022-01-14</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>8</th>
-      <td>Liverpool</td>
-      <td>Brentford</td>
-      <td>Albert Stubbins, the only footballer to featur...</td>
-      <td>Andy Hunter</td>
-      <td>Anfield</td>
-      <td>Jon Moss</td>
-      <td>[1-3, 21-2, 5-1]</td>
-      <td>1.333333</td>
-      <td>11.500000</td>
-      <td>6.000000</td>
-      <td>2022-01-15</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>West Ham</td>
-      <td>Leeds</td>
-      <td>West Ham regained fourth place by beating Norw...</td>
-      <td>Jacob Steinberg</td>
-      <td>London Stadium</td>
-      <td>Mike Dean</td>
-      <td>[4-6, 43-10, 3-1]</td>
-      <td>1.666667</td>
-      <td>5.300000</td>
-      <td>4.000000</td>
-      <td>2022-01-15</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>Aston Villa</td>
-      <td>Manchester United</td>
-      <td>The extent of the problems Ralf Rangnick has i...</td>
-      <td>Stephen Hollis</td>
-      <td>Villa Park</td>
-      <td>David Coote</td>
-      <td>[2-1, 19-13, 13-5]</td>
-      <td>3.000000</td>
-      <td>2.461538</td>
-      <td>3.600000</td>
-      <td>2022-01-14</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>Leicester</td>
-      <td>Brighton</td>
-      <td>Brendan Rodgers blamed naivety for the extraor...</td>
-      <td>Paul Doyle</td>
-      <td>King Power Stadium</td>
-      <td>Martin Atkinson</td>
-      <td>[8-5, 9-2, 12-5]</td>
-      <td>2.600000</td>
-      <td>5.500000</td>
-      <td>3.400000</td>
-      <td>2022-01-22</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>Leeds</td>
+      <th>80</th>
+      <td>Portsmouth</td>
       <td>Burnley</td>
-      <td>The bad news for Marcelo Bielsa and Leeds is t...</td>
-      <td>Louise Taylor</td>
-      <td>Elland Road</td>
-      <td>Kevin Friend</td>
-      <td>[6-5, 5-2, 13-5]</td>
-      <td>2.200000</td>
-      <td>3.500000</td>
-      <td>3.600000</td>
-      <td>2022-01-01</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>Leeds</td>
-      <td>Newcastle</td>
-      <td>Can Eddie Howe choreograph Newcastle’s second ...</td>
-      <td>Louise Taylor</td>
-      <td>Elland Road</td>
-      <td>Chris Kavanagh</td>
-      <td>[1-1, 3-1, 5-2]</td>
-      <td>2.000000</td>
+      <td>Avram Grant is growing tired of the hypothetic...</td>
+      <td>James Callow</td>
+      <td>Fratton Park</td>
+      <td>P Dowd</td>
+      <td>[4-5, 3-1, 12-5]</td>
+      <td>1.800000</td>
       <td>4.000000</td>
-      <td>3.500000</td>
-      <td>2022-01-21</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>3.40</td>
+      <td>2009-12-04</td>
+      <td>https://www.theguardian.com/football/2009/dec/...</td>
     </tr>
     <tr>
-      <th>14</th>
-      <td>Brentford</td>
-      <td>Aston Villa</td>
-      <td>Steven Gerrard returns to the touchline for As...</td>
-      <td>Tim Knowles</td>
-      <td>Brentford Community Stadium</td>
-      <td>Craig Pawson</td>
-      <td>[2-1, 6-4, 2-1]</td>
-      <td>3.000000</td>
-      <td>2.500000</td>
-      <td>3.000000</td>
-      <td>2022-01-01</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>Norwich</td>
-      <td>Everton</td>
-      <td>If Norwich have any hope of staging an unlikel...</td>
-      <td>Stephen Hollis</td>
-      <td>Carrow Road</td>
-      <td>Andy Madley</td>
-      <td>[37-13, 19-17, 18-7]</td>
-      <td>3.846154</td>
-      <td>2.117647</td>
-      <td>3.571429</td>
-      <td>2022-01-14</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>Southampton</td>
-      <td>Manchester City</td>
-      <td>Manchester City have won 12 league matches in ...</td>
-      <td>Graham Searles</td>
-      <td>St Mary’s Stadium</td>
-      <td>Simon Hooper</td>
-      <td>[23-2, 3-10, 11-2]</td>
-      <td>12.500000</td>
-      <td>1.300000</td>
-      <td>6.500000</td>
-      <td>2022-01-21</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>Tottenham</td>
-      <td>Arsenal</td>
-      <td>For the first time in a while more than just b...</td>
-      <td>Stephen Hollis</td>
-      <td>Tottenham Hotspur Stadium</td>
-      <td>Chris Kavanagh</td>
-      <td>[8-5, 2-1, 12-5]</td>
-      <td>2.600000</td>
-      <td>3.000000</td>
+      <th>81</th>
+      <td>Wigan Athletic</td>
+      <td>Bolton Wanderers</td>
+      <td>Bolton arrive at the DW Stadium outside the re...</td>
+      <td>Marcus Christenson</td>
+      <td>DW Stadium</td>
+      <td>A Wiley</td>
+      <td>[1-1, 12-5, 9-4]</td>
+      <td>2.000000</td>
       <td>3.400000</td>
-      <td>2022-01-15</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>3.25</td>
+      <td>2009-12-18</td>
+      <td>https://www.theguardian.com/football/2009/dec/...</td>
     </tr>
     <tr>
-      <th>18</th>
-      <td>Chelsea</td>
-      <td>Tottenham</td>
-      <td>The dynamic has changed before Chelsea and Tot...</td>
-      <td>Jacob Steinberg</td>
-      <td>Stamford Bridge</td>
-      <td>Paul Tierney</td>
-      <td>[13-18, 9-2, 13-4]</td>
-      <td>1.722222</td>
-      <td>5.500000</td>
-      <td>4.250000</td>
-      <td>2022-01-22</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>Chelsea</td>
-      <td>Liverpool</td>
-      <td>After threatening a three-way title race, Chel...</td>
-      <td>Jacob Steinberg</td>
-      <td>Stamford Bridge</td>
-      <td>Anthony Taylor</td>
-      <td>[2-1, 7-5, 13-5]</td>
-      <td>3.000000</td>
-      <td>2.400000</td>
+      <th>82</th>
+      <td>Blackburn Rovers</td>
+      <td>Stoke City</td>
+      <td>Surviving for three years is the key to Premie...</td>
+      <td>Richard Rae</td>
+      <td>Ewood Park</td>
+      <td>H Webb</td>
+      <td>[9-10, 13-5, 12-5]</td>
+      <td>1.900000</td>
       <td>3.600000</td>
-      <td>2022-01-01</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>3.40</td>
+      <td>2009-11-27</td>
+      <td>https://www.theguardian.com/football/2009/nov/...</td>
+    </tr>
+    <tr>
+      <th>83</th>
+      <td>Arsenal</td>
+      <td>Tottenham Hotspur</td>
+      <td>Robbie Keane's belief that Tottenham have a sq...</td>
+      <td>Kevin McCarra</td>
+      <td>Emirates Stadium</td>
+      <td>M Clattenburg</td>
+      <td>[11-20, 9-2, 13-5]</td>
+      <td>1.550000</td>
+      <td>5.500000</td>
+      <td>3.60</td>
+      <td>2009-10-30</td>
+      <td>https://www.theguardian.com/football/2009/oct/...</td>
+    </tr>
+    <tr>
+      <th>84</th>
+      <td>Portsmouth</td>
+      <td>Tottenham Hotspur</td>
+      <td>Jermain Defoe, Peter Crouch and Niko Kranjcar ...</td>
+      <td>Dominic Fifield</td>
+      <td>Fratton Park</td>
+      <td>P Dowd</td>
+      <td>[3-1, 4-5, 12-5]</td>
+      <td>4.000000</td>
+      <td>1.800000</td>
+      <td>3.40</td>
+      <td>2009-10-16</td>
+      <td>https://www.theguardian.com/football/2009/oct/...</td>
     </tr>
   </tbody>
 </table>
+<p>85 rows × 12 columns</p>
 </div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">home_team</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([&#39;Crystal Palace&#39;, &#39;Newcastle&#39;, &#39;Manchester United&#39;,
-       &#39;Manchester City&#39;, &#39;Arsenal&#39;, &#39;Brentford&#39;, &#39;Everton&#39;, &#39;Wolves&#39;,
-       &#39;Liverpool&#39;, &#39;West Ham&#39;, &#39;Aston Villa&#39;, &#39;Leicester&#39;, &#39;Leeds&#39;,
-       &#39;Norwich&#39;, &#39;Southampton&#39;, &#39;Tottenham&#39;, &#39;Chelsea&#39;], dtype=object)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">away_team</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([&#39;Liverpool&#39;, &#39;Watford&#39;, &#39;West Ham&#39;, &#39;Chelsea&#39;, &#39;Burnley&#39;, &#39;Wolves&#39;,
-       &#39;Aston Villa&#39;, &#39;Southampton&#39;, &#39;Brentford&#39;, &#39;Leeds&#39;,
-       &#39;Manchester United&#39;, &#39;Brighton&#39;, &#39;Newcastle&#39;, &#39;Everton&#39;,
-       &#39;Manchester City&#39;, &#39;Arsenal&#39;, &#39;Tottenham&#39;], dtype=object)</pre>
 </div>
 
 </div>
@@ -1369,78 +1111,78 @@ sleep(time)</code></pre>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Crystal Palace</td>
-      <td>Liverpool</td>
-      <td>Liverpool have already dispelled most of the d...</td>
-      <td>Stephen Hollis</td>
-      <td>Selhurst Park</td>
-      <td>Kevin Friend</td>
-      <td>['5-1', '8-13', '10-3']</td>
-      <td>6.000000</td>
-      <td>1.615385</td>
-      <td>4.333333</td>
-      <td>2022-01-22</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Bolton Wanderers</td>
+      <td>Tottenham Hotspur</td>
+      <td>Old Trafford, where they have not won since 19...</td>
+      <td>Tim Rich</td>
+      <td>Reebok Stadium</td>
+      <td>M Jones</td>
+      <td>['13-5', '10-11', '23-10']</td>
+      <td>3.600000</td>
+      <td>1.909091</td>
+      <td>3.30</td>
+      <td>2009-10-02</td>
+      <td>https://www.theguardian.com/football/2009/oct/...</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Newcastle</td>
-      <td>Watford</td>
-      <td>Moussa Sissoko returns to Newcastle in Watford...</td>
-      <td>Louise Taylor</td>
-      <td>St James’ Park</td>
-      <td>Paul Tierney</td>
-      <td>['19-17', '27-10', '27-10']</td>
-      <td>2.117647</td>
-      <td>3.700000</td>
-      <td>3.700000</td>
-      <td>2022-01-14</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Manchester City</td>
+      <td>Hull City</td>
+      <td>Hull's previous visit to Eastlands ended in a ...</td>
+      <td>Jamie Jackson</td>
+      <td>City of Manchester Stadium</td>
+      <td>L Probert</td>
+      <td>['2-9', '10-1', '21-5']</td>
+      <td>1.222222</td>
+      <td>11.000000</td>
+      <td>5.20</td>
+      <td>2009-11-27</td>
+      <td>https://www.theguardian.com/football/2009/nov/...</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Manchester United</td>
-      <td>West Ham</td>
-      <td>This is a genuine six-pointer in which Manches...</td>
-      <td>Jamie Jackson</td>
-      <td>Old Trafford</td>
-      <td>Jon Moss</td>
-      <td>['10-11', '3-1', '11-4']</td>
-      <td>1.909091</td>
-      <td>4.000000</td>
-      <td>3.750000</td>
-      <td>2022-01-21</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Manchester City</td>
+      <td>Fulham</td>
+      <td>Mark Hughes will have half an eye on events at...</td>
+      <td>Chris Bell</td>
+      <td>City of Manchester Stadium</td>
+      <td>K Friend</td>
+      <td>['2-5', '13-2', '3-1']</td>
+      <td>1.400000</td>
+      <td>7.500000</td>
+      <td>4.00</td>
+      <td>2009-10-23</td>
+      <td>https://www.theguardian.com/football/2009/oct/...</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Manchester City</td>
-      <td>Chelsea</td>
-      <td>Manchester City would surely finish off Chelse...</td>
-      <td>Jamie Jackson</td>
-      <td>Etihad Stadium</td>
-      <td>Craig Pawson</td>
-      <td>['8-11', '22-5', '3-1']</td>
-      <td>1.727273</td>
-      <td>5.400000</td>
-      <td>4.000000</td>
-      <td>2022-01-14</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Sunderland</td>
+      <td>Everton</td>
+      <td>Confidence could well be in short supply with ...</td>
+      <td>Louise Taylor</td>
+      <td>Stadium of Light</td>
+      <td>M Atkinson</td>
+      <td>['13-10', '9-5', '11-5']</td>
+      <td>2.300000</td>
+      <td>2.800000</td>
+      <td>3.20</td>
+      <td>2009-12-24</td>
+      <td>https://www.theguardian.com/football/2009/dec/...</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Arsenal</td>
-      <td>Burnley</td>
-      <td>Arsenal have no excuses if their dismal form i...</td>
-      <td>Graham Searles</td>
-      <td>Emirates Stadium</td>
-      <td>David Coote</td>
-      <td>['2-5', '9-1', '4-1']</td>
-      <td>1.400000</td>
-      <td>10.000000</td>
-      <td>5.000000</td>
-      <td>2022-01-22</td>
-      <td>https://www.theguardian.com/football/2022/jan/...</td>
+      <td>Fulham</td>
+      <td>Tottenham Hotspur</td>
+      <td>Teams are increasingly viewing trips to Craven...</td>
+      <td>Dominic Fifield</td>
+      <td>Craven Cottage</td>
+      <td>S Bennett</td>
+      <td>['17-10', '27-20', '9-4']</td>
+      <td>2.700000</td>
+      <td>2.350000</td>
+      <td>3.25</td>
+      <td>2009-12-24</td>
+      <td>https://www.theguardian.com/football/2009/dec/...</td>
     </tr>
   </tbody>
 </table>

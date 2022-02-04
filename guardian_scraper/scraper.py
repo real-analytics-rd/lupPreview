@@ -8,8 +8,10 @@ import dateparser
 import pandas as pd
 import numpy as np
 import pymongo
+import mongoengine
 import json
 import random
+import logging
 from mongoengine import *
 from typing import *
 from requests_html import HTMLSession
@@ -298,7 +300,7 @@ class PageExtractor:
         return preview_text_author
 
     @staticmethod
-    def extract_preview_date(page: BeautifulSoup) -> Union[datetime, str]:
+    def extract_preview_date(page: BeautifulSoup) -> Union[datetime, None]:
         """
           returns the publication date of the preview.
 
@@ -310,7 +312,7 @@ class PageExtractor:
         Returns
         -------
         preview_date: datetime.date
-          if not found 'n/a'
+          if not found None
 
         """
         # there are 2 dates for the preview
@@ -332,6 +334,7 @@ class PageExtractor:
                 preview_date = dateparser.parse(date).date()
                 break
         except Exception as e:
+            logging.error('error: Preview date is not available')
             preview_date = None
 
         return preview_date
@@ -365,19 +368,20 @@ class PageExtractor:
                 0
             ].strip()
         except Exception as e:
+            logging.error('error: Venue information is not available')
             venue = None
         try:
             referee = PageExtractor.get_values_matching_regex(page, referee_regex)[
                 0
             ].strip()
         except Exception as e:
+            logging.error('error: Referee information is not available')
             referee = None
 
         odds = PageExtractor.get_values_matching_regex(page, odds_regex)
 
         match_infos = dict({"venue": venue, "referee": referee, "odds": odds})
         return match_infos
-
 
 # Cell
 class ScrapingTheGuardian:
@@ -403,7 +407,7 @@ class ScrapingTheGuardian:
         returns decimal odds.
     extract_preview_items(page,title)
         returns all information of a football preview.
-    save_previews_locally(self,page)
+    save_previews_locally(self,page,last_date_stop,last_preview)
         save all browsed previews in a local folder.
     extract_previews_information(self,folder_path)
         returns all the information of all local previews.
@@ -461,6 +465,7 @@ class ScrapingTheGuardian:
                     / int(betting_odds_home.split("-")[1])
                 ) + 1
             except ZeroDivisionError:
+                logging.error('error: Home team odds are wrong')
                 pass
             # Away team odds
             betting_odds_away = odds[1]
@@ -470,6 +475,7 @@ class ScrapingTheGuardian:
                     / int(betting_odds_away.split("-")[1])
                 ) + 1
             except ZeroDivisionError:
+                logging.error('error: Away team odds are wrong')
                 pass
             # if we have the normal format of odds
             # we will have 3 parts(odds_home,odds_away,odds_draw)
@@ -482,6 +488,7 @@ class ScrapingTheGuardian:
                         / int(betting_odds_draw.split("-")[1])
                     ) + 1
                 except ZeroDivisionError:
+                    logging.error('error: Draw odds are wrong')
                     pass
 
         betting_odds = dict(
@@ -558,7 +565,9 @@ class ScrapingTheGuardian:
         )
         return preview_items
 
-    def save_previews_locally(self, page: BeautifulSoup) -> None:
+    def save_previews_locally(
+        self, page: BeautifulSoup, last_date_stop: datetime, last_preview: bool
+    ) -> bool:
         """
           save all browsed previews in local
 
@@ -566,21 +575,39 @@ class ScrapingTheGuardian:
         ----------
         page: bs4.BeautifulSoup
             the html format of the page
+        last_date_stop : datetime
+            the last extracted preview in the database
+        last_preview: bool
+            an indicator to know when we should stop the scraper
 
         Returns
         -------
-        None
+        bool
 
         """
         # We pick all of the match previews on the webpage.
         previews = page.findAll("div", {"class": "fc-item__content"})
-        # for each preview we extract its information
+        # for each preview we extract its information.
+
         for preview in previews:
-            preview_items = {}
+            # we pick the preview date and we parse it in a date format
+            preview_date = preview.find("time")["datetime"]
+            preview_date = dateparser.parse(preview_date).date()
+            # if the date selected from the previews database exists
+            # and has been reached by the preview date, we stop the loop
+            # and mark last_preview as True.
+            if last_date_stop and preview_date <= last_date_stop.date():
+                logging.info(
+                    "Finish: The Scraper is stopped. The last preview date is {}".format(
+                        preview_date
+                    )
+                )
+                last_preview = True
+                break
             # Pick up the preview link
             preview_link = preview.find("a")["href"]
-            print(preview_link)
-            # Pick up the match preview page
+            logging.info("Preview link: {}".format(preview_link))
+            # Pick up the football match preview page
             preview_page = Parser.parse_page(preview_link, self.session)
             # We need only Premier League Previews
             # To filter previews we need to Find the title of the preview
@@ -637,6 +664,8 @@ class ScrapingTheGuardian:
                 # save preview in a local folder
                 Parser.store_page_locally(preview_page, preview_link)
 
+        return last_preview
+
     def extract_previews_information(self, folder_path: str) -> List[Dict[str, object]]:
         """
           returns all the information of all previews saved in a local folder
@@ -678,11 +707,10 @@ class ScrapingTheGuardian:
             # store information in the "all_previews_information" list
             all_previews_information.append(preview_infos)
             # just for testing
-            print(preview_infos)
-            print("-----------------------------------------------")
+            logging.info("Preview data: {}".format(preview_infos))
+            logging.info("-----------------------------------------------------")
 
         return all_previews_information
-
 
 # Cell
 class PreviewsMapping:
@@ -780,16 +808,18 @@ class PreviewsMapping:
         # Get only gameId and gameDate fields
         projection = {"gameId": 1, "gameDate": 1, "_id": 0}
         # Get data
-        result = mongoengine_client["opta"]["Fixture"].find_one(
-            filter=game_filter, projection=projection
-        )
+        result = MongoClient.find(
+            mongoengine_client, "opta", "Fixture", game_filter, projection
+        ).limit(1)
         game_id = None
         game_date = None
         # If there is a match
         # We pick the game ID and date
-        if result:
-            game_id = result["gameId"]
-            game_date = result["gameDate"]
+        query = list(result)
+
+        if len(query) > 0:
+            game_id = query[0]["gameId"]
+            game_date = query[0]["gameDate"]
 
         return dict({"gameId": game_id, "gameDate": game_date})
 
@@ -830,33 +860,28 @@ class PreviewsMapping:
             game = PreviewsMapping.get_game_id_date(
                 home_team_id, away_team_id, preview_date
             )
+            logging.info('Game {} in {}: {} Vs {} '.format(game["gameId"],preview_date,home_team, away_team))
             # connect to our mongoDb cluster
             mongoengine_client = MongoClient.connect("1")
             # preview class
             preview = Previews(
-                game_id=game["gameId"],
-                home_team=row["home_team"],
-                away_team=row["away_team"],
+                gameId=game["gameId"],
+                homeTeam=row["home_team"],
+                awayTeam=row["away_team"],
                 text=row["text"],
                 author=row["author"],
                 venue=row["venue"],
                 referee=row["referee"],
                 odds=row["odds"],
-                odds_home_team=row["odds_home_team"],
-                odds_away_team=row["odds_away_team"],
-                odds_draw=row["odds_draw"],
-                game_date=game["gameDate"],
-                preview_date=row["preview_date"],
-                preview_link=row["preview_link"],
+                oddsHomeTeam=row["odds_home_team"],
+                oddsAwayTeam=row["odds_away_team"],
+                oddsDraw=row["odds_draw"],
+                gameDate=game["gameDate"],
+                previewDate=row["preview_date"],
+                previewLink=row["preview_link"],
             )
             # Validate and save input raw data
-            try:
-                preview.validate()
-                preview.save()
-            except Exception as e:
-                print("warning:", e)
-                continue
-
+            MongoClient.save(preview)
 
 # Cell
 class Previews(Document):
@@ -867,11 +892,11 @@ class Previews(Document):
 
     Attributes
     ----------
-    game_id : int
+    gameId : int
         the opta game id
-    home_team : str
+    homeTeam : str
         home team name
-    away_team : str
+    awayTeam : str
         away_team name
     text : str
         preview text
@@ -883,36 +908,35 @@ class Previews(Document):
         match referee
     odds : str
         betting odds
-    odds_home_team : float
+    oddsHomeTeam : float
         decimal betting odds for home team
-    odds_away_team : float
+    oddsAwayTeam : float
         decimal betting odds for away team
-    odds_draw : float
+    oddsDraw : float
         decimal betting odds for draw
-    game_date : datetime
+    gameDate : datetime
         the date of the match
-    preview_date : datetime
+    previewDate : datetime
         the date of the preview
-    preview_link : str
+    previewLink : str
         the Guardian preview link
 
     """
 
-    game_id = IntField()
-    home_team = StringField()
-    away_team = StringField()
+    gameId = IntField()
+    homeTeam = StringField()
+    awayTeam = StringField()
     text = StringField()
     author = StringField()
     venue = StringField()
     referee = StringField()
     odds = StringField()
-    odds_home_team = FloatField()
-    odds_away_team = FloatField()
-    odds_draw = FloatField()
-    game_date = DateTimeField()
-    preview_date = DateTimeField()
-    preview_link = StringField()
-
+    oddsHomeTeam = FloatField()
+    oddsAwayTeam = FloatField()
+    oddsDraw = FloatField()
+    gameDate = DateTimeField()
+    previewDate = DateTimeField()
+    previewLink = StringField()
 
 # Cell
 class MongoClient:
@@ -932,6 +956,11 @@ class MongoClient:
         returns MongoDb credentials stored in a local file.
     connect(index)
         returns the mongoDb instance.
+    save(collection)
+        save the MongoDb collection.
+    find(mongoengine_client,db,collection,game_filter,projection)
+        find a MongoDb query.
+
     """
 
     # the file path of the MongoDb credentials
@@ -972,3 +1001,61 @@ class MongoClient:
         DB_URI = MongoClient.find_credentials()["DB_URI"][index]
         mongoengine_client = connect(host=DB_URI)
         return mongoengine_client
+
+    @staticmethod
+    def save(
+        collection: mongoengine.base.metaclasses.TopLevelDocumentMetaclass,
+    ) -> None:
+        """
+          save the MongoDb collection.
+
+        Parameters
+        ----------
+        collection: mongoengine.base.metaclasses.TopLevelDocumentMetaclass
+            the MongoDb collection
+
+        Returns
+        -------
+        None
+
+        """
+        try:
+            collection.validate()
+            collection.save()
+        except Exception as e:
+            logging.error('error: {}'.format(e))
+
+    @staticmethod
+    def find(
+        mongoengine_client: pymongo.mongo_client.MongoClient,
+        db: str,
+        collection: str,
+        game_filter: dict,
+        projection: dict,
+    ) -> pymongo.cursor.Cursor:
+        """
+          find a MongoDb query.
+
+        Parameters
+        ----------
+        mongoengine_client: mongoengine.base.metaclasses.TopLevelDocumentMetaclass
+            the MongoDb collection
+        db: str
+            the Database name
+        collection: str
+            the collection name
+        game_filter: dict
+            the query filter
+        projection: dict
+            the query projection
+
+        Returns
+        -------
+        pymongo.cursor.Cursor
+
+        """
+
+        result = mongoengine_client[db][collection].find(
+            filter=game_filter, projection=projection
+        )
+        return result
