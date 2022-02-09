@@ -12,6 +12,9 @@ entries:
     - output: web,pdf
       title: The Guardian Scraper
       url: scraper.html
+    - output: web,pdf
+      title: Title
+      url: DataStruct_Fixture.html
     output: web
     title: guardian_scraper
   output: web

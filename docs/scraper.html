@@ -70,7 +70,7 @@ nb_path: "00_scraper.ipynb"
 </tr>
 <tr>
 <td>There are some previews that don't have author and text</td>
-<td>For previews that have no text, we put 'n/a' (not available)</td>
+<td>For previews that have no text, we put None (not available)</td>
 </tr>
 <tr>
 <td>The existence of previews for the FA CUP,Carabao Cup,Champions league,World Cup</td>
@@ -106,127 +106,6 @@ nb_path: "00_scraper.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Parser-Class">Parser Class<a class="anchor-link" href="#Parser-Class"> </a></h3><h5 id="This-class-is-used-to-parse-pages-and-has-3-functions:">This class is used to parse pages and has 3 functions:<a class="anchor-link" href="#This-class-is-used-to-parse-pages-and-has-3-functions:"> </a></h5><p>1- <b> parse_page </b> function:retrieves the html format of a given web page link.</p>
-<p>2- <b> store_page_locally </b> function: save a preview page in a specified local folder.</p>
-<p>3- <b> get_next_page </b> function: retrieves the link to the next page and determines if it is the last page of previews in order to stop scraping.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="Parser" class="doc_header"><code>class</code> <code>Parser</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L25" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Parser</code>()</p>
-</blockquote>
-<p>A class to represent previews pages parser.</p>
-<p>...</p>
-<h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>parse_page(page_url, session)
-    returns the html format of the page.
-store_page_locally(page, page_url)
-    save a given page in a local folder.
-get_next_page(page)
-    returns the link of the following page and if it's the last page.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="PageExtractor-Class">PageExtractor Class<a class="anchor-link" href="#PageExtractor-Class"> </a></h3><h5 id="This-class-has-five-functions-for-extracting-data-from-a-given-football-preview:">This class has five functions for extracting data from a given football preview:<a class="anchor-link" href="#This-class-has-five-functions-for-extracting-data-from-a-given-football-preview:"> </a></h5><p>1- <b> get_values_matching_regex </b> returns values that match a regex expression.</p>
-<p>&emsp;Because the "Guardian" website has two possible formats, we defined two possible classifiers for the p tags <br>&emsp;containing the information to be extracted.<br>
-&emsp;We go through each p section, and if we find the result, we return it; otherwise, a None is returned.<br>
-&emsp;The result is a list of tuples, with each tuple representing a value that matches the regex pattern.<br> &emsp;Unsatisfied patterns for regexes that include <b>OR</b> conditions will be empty tuples. That's why you need to get rid of it.</p>
-<p>2- <b> extract_teams_names </b> returns the names of the two teams in a football preview.</p>
-<p>&emsp;The preview includes team names at the title level.
- <br>&emsp;example:
-          &emsp;&emsp;{{Squad Sheets: Team A v Team B}} 
-         or &emsp;&emsp;{{Team A v Team B: match preview}} 
-         or &emsp;&emsp;{{Team A v Team B: Squad Sheets}}
-<br>&emsp;As a result, our strategy is to delete the text preceding or following the names and recover each name <br>&emsp;individually.
-<br>&emsp;If we were successful in obtaining the names, they will be returned in a Python dictionary; <br>&emsp;otherwise, the values will be 'n/a'(Not available).</p>
-<p>3- <b> extract_text_authors </b>returns the text and author of a football preview.</p>
-<p>&emsp;It's difficult to determine the position of the text, but it's almost certainly the block with the most <br>&emsp;characters.
-<br>&emsp;To proceed, we store each paragraph and its size in a Python dictionary, and then we take the <br>&emsp;block with the largest size.
-<br>&emsp;To be sure, we double-check by only accepting texts with a size greater than 160 because there <br>&emsp;are football previews with no text or author.
-<br>&emsp;Furthermore, the author information is always under the text section, more specifically in a <br>&emsp;strong tag, so if the text does not exist, the author is missing as well.
-If we were successful in <br>&emsp;obtaining the text and the author, they will be returned in a Python dictionary. Otherwise, the <br>&emsp;values will be 'n/a'(Not available).</p>
-<p>4- <b> extract_preview_date </b> returns the date of publication of a football preview.</p>
-<p>&emsp;We have distinguished two dates for the date of publication: the first is the date of publication, <br>&emsp;and the second is the date of the most recent modification.
-In this sense, we go through the <br>&emsp;section where the two dates are located and take only the first and use 'dateparser' to convert <br>&emsp;the string into a date in "yyyy-mm-dd" format.
-If we were successful in obtaining the date, it will <br>&emsp; be returned. Otherwise, the value will be 'n/a'(Not available).</p>
-<p>5- <b> extract_match_infos </b> returns a football match information (venue, referee, odds).</p>
-<p>&emsp;Here, we'll call the first function <b>get_values_matching_regex</b> , which will allow us to retrieve this<br>&emsp;information by specifying a regex expression for each.<br>&emsp;If this data is not available, the value will be 'n/a'.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="PageExtractor" class="doc_header"><code>class</code> <code>PageExtractor</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L135" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PageExtractor</code>()</p>
-</blockquote>
-<p>A class to represent an information extractor from a football preview.</p>
-<p>...</p>
-<h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>get_values_matching_regex(page, regex)
-    return all matched patterns from a preview page.
-extract_teams_names(title)
-    returns team names from the preview title.
-extract_text_authors(page)
-    returns the text and author of the preview.
-extract_preview_date(page)
-    returns the publication date of the preview.
-extract_match_infos(page, venue_regex, referee_regex, odds_regex)
-    returns a football match information (venue,referee,odds).</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="ScrapingTheGuardian-Class">ScrapingTheGuardian Class<a class="anchor-link" href="#ScrapingTheGuardian-Class"> </a></h3><h5 id="This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-4-functions:">This class represents a scraper from the "Guardian" website and has 4 functions:<a class="anchor-link" href="#This-class-represents-a-scraper-from-the-&quot;Guardian&quot;-website-and-has-4-functions:"> </a></h5><p>1- <b> calculate_betting_odds </b> returns decimal odds.</p>
 <p>&emsp;In this section, we will calculate the odds derived from the football preview.
 <br>&emsp;Considering the following example:
@@ -235,20 +114,19 @@ extract_match_infos(page, venue_regex, referee_regex, odds_regex)
 <br>&emsp;&emsp;&emsp; home = (9/20) + 1 
 <br>&emsp;&emsp;&emsp; away = (29/5) + 1
 <br>&emsp;&emsp;&emsp; draw = (6/5) + 1
-<br>&emsp;If we were successful in obtaining decimal odds, they will be returned in a Python dictionary.<br>&emsp;Otherwise, the values will be 'n/a'(Not available).</p>
+<br>&emsp;If we were successful in obtaining decimal odds, they will be returned in a Python dictionary.<br>&emsp;Otherwise, the values will be None (Not available).</p>
 <p>2- <b> extract_preview_items </b>returns the entire contents of a football preview.</p>
 <p>&emsp;In this section, we will call the functions defined in the PageExtractor class and return a Python dictionary containing all of this information.
 <br>&emsp;But first, we use the <b>calculate_betting_odds</b> function to calculate the sports odds for the home team's victory, the away team's victory, and a draw.</p>
-<p>"home team","away team","text","author","venue","referee","odds","odds home team","odds away team","odds draw", "preview date","preview_link" are the returned values.</p>
-<p>3- <b> save_previews_locally </b> save all browsed previews in a local folder.</p>
-<p>&emsp;we verify if we have reached the last extracted preview date,
-if yes, we will stop the scraper
-<br>&emsp;For a given page, we retrieve all the previews and go through them one by one, taking the link, title, subject, and aside section.
-<br>&emsp;if the words "cup" or "champions league" do not belong in these sections, we save the preview in a local folder
-<br>&emsp;Otherwise, we move on to the next preview.
-<br>&emsp;The <b>store_page_locally</b> function, will be called here to save the preview page.</p>
-<p>4- <b> extract_previews_information </b> returns the information of all local previews.</p>
-<p>&emsp;In a local folder, we extract the information for each file (preview in html format) by calling the <b> extract_preview_items</b> function <br>&emsp;and then we save the information for each preview in a list.</p>
+<p>"game Id","home team","away team","text","author","venue","referee","odds","odds home team","odds away team","odds draw", "preview date","game Date","preview_link" are the returned values.</p>
+<p>3- <b> extract_previews </b> returns the information of all extracted previews.</p>
+<p>&emsp;We retrieve all previews for a given page and go through them one by one, taking the link and getting its data using the "Guardian Api."
+<br>&emsp;If the "Guardian Api" does not work, we will resort to the traditional process of html parsing. 
+<br>&emsp;For each preview in the data extracted from the Guardian, we will look for the id of the home team and the away team and match it with the <b>opta.fixture</b><br>&emsp;database to get the gameID and gameDate and finally we save it in a MongoDb collection.
+<br>&emsp;If the game exists, we will proceed with the data extraction.
+The previous function, <b>extract_preview_items</b>, will be called here to extract information from <br>&emsp;each 
+preview, which will then be stored in the list "all previews."
+<br>&emsp;However, we will only extract previews that do not already exist in the database.</p>
 
 </div>
 </div>
@@ -264,7 +142,7 @@ if yes, we will stop the scraper
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L387" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
+<h2 id="ScrapingTheGuardian" class="doc_header"><code>class</code> <code>ScrapingTheGuardian</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L23" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>ScrapingTheGuardian</code>()</p>
 </blockquote>
 <p>A class to represent a scraper from the "Guardian" website.</p>
 <p>...</p>
@@ -278,12 +156,10 @@ ODDS_REGEX : str
     odds regex expression</p>
 <h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>calculate_betting_odds(odds)
     returns decimal odds.
-extract_preview_items(page,title)
+extract_preview_items(content,link,preview_date,game_date,game_id,home_team,away_team)
     returns all information of a football preview.
-save_previews_locally(self,page,last_date_stop,last_preview)
-    save all browsed previews in a local folder.
-extract_previews_information(self,folder_path)
-    returns all the information of all local previews.</p>
+extract_previews(self,page,previews_last_date,last_preview,all_previews,df_teams)
+    returns the information of all extracted previews.</p>
 
 </div>
 
@@ -304,193 +180,7 @@ extract_previews_information(self,folder_path)
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="PreviewsMapping-Class">PreviewsMapping Class<a class="anchor-link" href="#PreviewsMapping-Class"> </a></h3><h5 id="This-class-represents-a-mapper-from-the-&quot;Opta&quot;-MongoDb-database-and-has-3-functions:">This class represents a mapper from the "Opta" MongoDb database and has 3 functions:<a class="anchor-link" href="#This-class-represents-a-mapper-from-the-&quot;Opta&quot;-MongoDb-database-and-has-3-functions:"> </a></h5><p>1- <b> get_team_id </b> returns the "opta" ID of a given team.</p>
-<p>&emsp;The use of a predefined dictionary containing the teams and their various names facilitates us in matching the team names extracted from the guardian and <br>&emsp;their IDs in the opta database. The use of a dictionary was required because the team names in the previews differ and sometimes use abbreviations or<br>&emsp;nicknames.</p>
-<p>2- <b> get_game_id_date </b>returns the id and the date of a given game.</p>
-<p>&emsp;After completing the scraping task and extracting the information, the previews must be matched with their ids in the opta.fixture database.
-We will query this <br>&emsp;database by specifying the home team, the away team, the closest gamedate to the preview publication date, and the Premier League competitionId, which  <br>&emsp;is equal to 8 in the database.</p>
-<p>3- <b> save_mapped_data </b> save all the mapped previews in a MongoDb collection.</p>
-<p>&emsp;For each preview in the data extracted from the Guardian, we will look for the id of the home team and the away team and match it with the <b>opta.fixture</b><br>&emsp;database to get the gameID and gameDate and finally we save it in a MongoDb collection.
-<br>&emsp;To complete our mission, we will call the last two functions <b> get_team_id </b> and <b>get_game_id_date</b>.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="PreviewsMapping" class="doc_header"><code>class</code> <code>PreviewsMapping</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L716" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>PreviewsMapping</code>()</p>
-</blockquote>
-<p>A class to represent a data mapper from a mongo database.</p>
-<p>...</p>
-<h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>get_team_id(team_name, df_teams)
-    returns the "opta" ID of a given team.
-get_game_id_date(home_team_id, away_team_id, preview_date)
-    returns the id and the date of a given game.
-get_mapped_data(data,df_teams)
-    save all the mapped previews in a MongoDb collection.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Previews-Class">Previews Class<a class="anchor-link" href="#Previews-Class"> </a></h3><h5 id="This-class-represents-the-extracted-previews-from-the-guardian:">This class represents the extracted previews from the guardian:<a class="anchor-link" href="#This-class-represents-the-extracted-previews-from-the-guardian:"> </a></h5><p>We created a class that contains the various attributes to store in order to save every preview information extracted from the Guardian website.
-<br>This class ensures that data is stored in a convenient format and type.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="Previews" class="doc_header"><code>class</code> <code>Previews</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L887" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Previews</code>(<strong>*<code>args</code></strong>, <strong>**<code>values</code></strong>) :: <code>Document</code></p>
-</blockquote>
-
-<pre><code>A class to represent the extracted previews from the guardian.
-
-</code></pre>
-<p>...</p>
-<h2 id="Attributes">Attributes<a class="anchor-link" href="#Attributes"> </a></h2><p>gameId : int
-    the opta game id
-homeTeam : str
-    home team name
-awayTeam : str
-    away_team name
-text : str
-    preview text
-author : str
-    preview author
-venue : str
-    match venue
-referee : str
-    match referee
-odds : str
-    betting odds
-oddsHomeTeam : float
-    decimal betting odds for home team
-oddsAwayTeam : float
-    decimal betting odds for away team
-oddsDraw : float
-    decimal betting odds for draw
-gameDate : datetime
-    the date of the match
-previewDate : datetime
-    the date of the preview
-previewLink : str
-    the Guardian preview link</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="MongoCLient-Class">MongoCLient Class<a class="anchor-link" href="#MongoCLient-Class"> </a></h3><h5 id="This-class-represents-a-MongoDb-Client-and-has-4-functions:">This class represents a MongoDb Client and has 4 functions:<a class="anchor-link" href="#This-class-represents-a-MongoDb-Client-and-has-4-functions:"> </a></h5><p>1- <b> find_credentials </b> returns the MongoDb credentials stored in a local file.</p>
-<p>2- <b> connect </b>returns the MongoDb instance to connect to a given cluster.</p>
-<p>There are two database URIs in the credentials file, the first of which is for the "OPTA" Database.
-<br>The second is for another database that was created to store extracted previews.</p>
-<p>3- <b> save </b> save a MongoDb collection.</p>
-<p>4- <b> find </b> find a MongoDb query.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h2 id="MongoClient" class="doc_header"><code>class</code> <code>MongoClient</code><a href="https://github.com/MeherKharbachi/guardian_scraper/tree/master/guardian_scraper/scraper.py#L942" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MongoClient</code>()</p>
-</blockquote>
-<p>A class to represent a MongoDb client.</p>
-<p>...</p>
-<h2 id="Attributes">Attributes<a class="anchor-link" href="#Attributes"> </a></h2><p>CREDENTIALS_PATH : str
-    the file path of the MongoDb credentials</p>
-<h2 id="Methods">Methods<a class="anchor-link" href="#Methods"> </a></h2><p>find_credentials()
-    returns MongoDb credentials stored in a local file.
-connect(index)
-    returns the mongoDb instance.
-save(collection)
-    save the MongoDb collection.
-find(mongoengine_client,db,collection,game_filter,projection)
-    find a MongoDb query.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="USE-CASE">USE CASE<a class="anchor-link" href="#USE-CASE"> </a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Scraping-all-pages-and-save-in-local">Scraping all pages and save in local<a class="anchor-link" href="#Scraping-all-pages-and-save-in-local"> </a></h3>
+<h3 id="Scraping-all-pages">Scraping all pages<a class="anchor-link" href="#Scraping-all-pages"> </a></h3>
 </div>
 </div>
 </div>
@@ -501,7 +191,11 @@ find(mongoengine_client,db,collection,game_filter,projection)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;scraper.log&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(levelname)s</span><span class="s2">:</span><span class="si">%(message)s</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<span class="c1"># starting url</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://www.theguardian.com/football/series/match-previews?page=36&quot;</span>
 <span class="c1"># initialize the scraper instance.</span>
 <span class="n">scraper</span> <span class="o">=</span> <span class="n">ScrapingTheGuardian</span><span class="p">()</span>
 <span class="c1"># initially we are not at the last page.</span>
@@ -510,36 +204,33 @@ find(mongoengine_client,db,collection,game_filter,projection)
 <span class="n">last_preview</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="c1"># we specify the last preview date in the previews collection on which the scraper will be turned off.</span>
 <span class="n">mongoengine_client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
-<span class="n">projection</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;previewDate&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-<span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">MongoClient</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">mongoengine_client</span><span class="p">,</span> <span class="s2">&quot;opta&quot;</span><span class="p">,</span> <span class="s2">&quot;previews&quot;</span><span class="p">,</span> <span class="p">{},</span> <span class="n">projection</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;previewDate&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;gameDate&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="p">)</span>
-<span class="c1"># if the database is empty we will scrap all pages</span>
-<span class="n">query</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">last_date_stop</span> <span class="o">=</span> <span class="n">query</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;previewDate&quot;</span><span class="p">]</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">last_date_stop</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">previews_last_date</span> <span class="o">=</span> <span class="n">Previews</span><span class="o">.</span><span class="n">objects</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-previewDate&quot;</span><span class="p">,</span> <span class="s2">&quot;-gameDate&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
 
-<span class="c1"># if we are not at the last page </span>
+<span class="c1"># if the database is empty we will scrap all pages</span>
+<span class="k">if</span> <span class="n">previews_last_date</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">last_previews_date</span> <span class="o">=</span> <span class="n">previews_last_date</span><span class="o">.</span><span class="n">previewDate</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">last_previews_date</span> <span class="o">=</span> <span class="kc">None</span>
+    
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The last preview date stored in the database is: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">last_previews_date</span><span class="p">))</span>
+<span class="n">all_previews</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># charging teams dictionary</span>
+<span class="n">df_teams</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;.//datasets//final_data.csv&quot;</span><span class="p">)</span>
+<span class="c1"># if we are not at the last page</span>
 <span class="c1"># and we haven&#39;t reached an extracted preview</span>
 <span class="c1"># we launch the scraper</span>
 <span class="k">while</span> <span class="ow">not</span> <span class="n">last_page</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">last_preview</span><span class="p">:</span>
     <span class="c1"># a random timer</span>
     <span class="n">time</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for </span><span class="si">{}</span><span class="s1"> seconds ...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The scraper will wait </span><span class="si">{}</span><span class="s2"> seconds ...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="p">))</span>
     <span class="c1"># wait time seconds</span>
     <span class="n">sleep</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;The current page URL: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
     <span class="c1"># get the html format of the page containing previews</span>
     <span class="n">page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">parse_page</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">scraper</span><span class="o">.</span><span class="n">session</span><span class="p">)</span>
-    <span class="c1"># launch the scraper , save previews in a local folder</span>
-    <span class="c1"># and get the first and last extracted preview date</span>
-    <span class="c1"># and if we are at the last preview or not</span>
-    <span class="n">last_preview</span> <span class="o">=</span> <span class="n">scraper</span><span class="o">.</span><span class="n">save_previews_locally</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">last_date_stop</span><span class="p">,</span> <span class="n">last_preview</span><span class="p">)</span>
+    <span class="c1"># launch the scraper , extract previews information</span>
+    <span class="n">last_preview</span><span class="p">,</span> <span class="n">all_previews</span> <span class="o">=</span> <span class="n">scraper</span><span class="o">.</span><span class="n">extract_previews</span><span class="p">(</span>
+        <span class="n">page</span><span class="p">,</span> <span class="n">last_previews_date</span><span class="p">,</span> <span class="n">last_preview</span><span class="p">,</span> <span class="n">all_previews</span><span class="p">,</span> <span class="n">df_teams</span>
+    <span class="p">)</span>
     <span class="c1"># get the url of the following page and verify if we are at the last page</span>
     <span class="n">url</span><span class="p">,</span> <span class="n">last_page</span> <span class="o">=</span> <span class="n">Parser</span><span class="o">.</span><span class="n">get_next_page</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
 </pre></div>
@@ -551,12 +242,6 @@ find(mongoengine_client,db,collection,game_filter,projection)
 </div>
     {% endraw %}
 
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Extract-information-from-local-previews">Extract information from local previews<a class="anchor-link" href="#Extract-information-from-local-previews"> </a></h3>
-</div>
-</div>
-</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -564,41 +249,7 @@ find(mongoengine_client,db,collection,game_filter,projection)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">local_folder</span> <span class="o">=</span> <span class="s2">&quot;.//previews//&quot;</span>
-<span class="n">scraper</span> <span class="o">=</span> <span class="n">ScrapingTheGuardian</span><span class="p">()</span>
-<span class="n">all_previews_information</span> <span class="o">=</span> <span class="n">scraper</span><span class="o">.</span><span class="n">extract_previews_information</span><span class="p">(</span><span class="n">local_folder</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/home/meherkh/anaconda3/envs/Real_Analytics/lib/python3.7/site-packages/dateparser/date_parser.py:35: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
-  date_obj = stz.localize(date_obj)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_previews_information</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_previews</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -647,6 +298,7 @@ find(mongoengine_client,db,collection,game_filter,projection)
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>game_id</th>
       <th>home_team</th>
       <th>away_team</th>
       <th>text</th>
@@ -658,84 +310,95 @@ find(mongoengine_client,db,collection,game_filter,projection)
       <th>odds_away_team</th>
       <th>odds_draw</th>
       <th>preview_date</th>
+      <th>game_date</th>
       <th>preview_link</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Bolton Wanderers</td>
-      <td>Tottenham Hotspur</td>
-      <td>Old Trafford, where they have not won since 19...</td>
-      <td>Tim Rich</td>
-      <td>Reebok Stadium</td>
-      <td>M Jones</td>
-      <td>[13-5, 10-11, 23-10]</td>
-      <td>3.600000</td>
-      <td>1.909091</td>
-      <td>3.30</td>
-      <td>2009-10-02</td>
-      <td>https://www.theguardian.com/football/2009/oct/...</td>
+      <td>987970</td>
+      <td>Tottenham</td>
+      <td>Everton</td>
+      <td>Tottenham are euphoric after Wednesday’s Champ...</td>
+      <td>David Hytner</td>
+      <td>Tottenham H Stadium</td>
+      <td>Andre Marriner</td>
+      <td>[5-4, 5-2, 5-2]</td>
+      <td>2.250000</td>
+      <td>3.500000</td>
+      <td>3.500000</td>
+      <td>2019-05-10 16:02:57+00:00</td>
+      <td>2019-05-12 14:00:00</td>
+      <td>https://www.theguardian.com/football/2019/may/...</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Manchester City</td>
-      <td>Hull City</td>
-      <td>Hull's previous visit to Eastlands ended in a ...</td>
-      <td>Jamie Jackson</td>
-      <td>City of Manchester Stadium</td>
-      <td>L Probert</td>
-      <td>[2-9, 10-1, 21-5]</td>
-      <td>1.222222</td>
-      <td>11.000000</td>
-      <td>5.20</td>
-      <td>2009-11-27</td>
-      <td>https://www.theguardian.com/football/2009/nov/...</td>
+      <td>987965</td>
+      <td>Fulham</td>
+      <td>Newcastle</td>
+      <td>Scott Parker’s future is no longer in question...</td>
+      <td>Benjy Nurick</td>
+      <td>Craven Cottage</td>
+      <td>Kevin Friend</td>
+      <td>[6-4, 7-4, 5-2]</td>
+      <td>2.500000</td>
+      <td>2.750000</td>
+      <td>3.500000</td>
+      <td>2019-05-10 15:41:23+00:00</td>
+      <td>2019-05-12 14:00:00</td>
+      <td>https://www.theguardian.com/football/2019/may/...</td>
     </tr>
     <tr>
       <th>2</th>
+      <td>987962</td>
+      <td>Brighton</td>
       <td>Manchester City</td>
-      <td>Fulham</td>
-      <td>Mark Hughes will have half an eye on events at...</td>
-      <td>Chris Bell</td>
-      <td>City of Manchester Stadium</td>
-      <td>K Friend</td>
-      <td>[2-5, 13-2, 3-1]</td>
-      <td>1.400000</td>
-      <td>7.500000</td>
-      <td>4.00</td>
-      <td>2009-10-23</td>
-      <td>https://www.theguardian.com/football/2009/oct/...</td>
+      <td>Vincent Kompany’s unforgettable winner against...</td>
+      <td>Benjy Nurick</td>
+      <td>Amex Stadium</td>
+      <td>Michael Oliver</td>
+      <td>[18-1, 2-11, 8-1]</td>
+      <td>19.000000</td>
+      <td>1.181818</td>
+      <td>9.000000</td>
+      <td>2019-05-10 15:26:50+00:00</td>
+      <td>2019-05-12 14:00:00</td>
+      <td>https://www.theguardian.com/football/2019/may/...</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Sunderland</td>
-      <td>Everton</td>
-      <td>Confidence could well be in short supply with ...</td>
-      <td>Louise Taylor</td>
-      <td>Stadium of Light</td>
-      <td>M Atkinson</td>
-      <td>[13-10, 9-5, 11-5]</td>
-      <td>2.300000</td>
-      <td>2.800000</td>
-      <td>3.20</td>
-      <td>2009-12-24</td>
-      <td>https://www.theguardian.com/football/2009/dec/...</td>
+      <td>987963</td>
+      <td>Burnley</td>
+      <td>Arsenal</td>
+      <td>Arsenal will be glad to see the back of their ...</td>
+      <td>Graham Searles</td>
+      <td>Turf Moor</td>
+      <td>Mike Dean</td>
+      <td>[23-10, 11-9, 3-1]</td>
+      <td>3.300000</td>
+      <td>2.222222</td>
+      <td>4.000000</td>
+      <td>2019-05-10 15:15:24+00:00</td>
+      <td>2019-05-12 14:00:00</td>
+      <td>https://www.theguardian.com/football/2019/may/...</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Fulham</td>
-      <td>Tottenham Hotspur</td>
-      <td>Teams are increasingly viewing trips to Craven...</td>
+      <td>987964</td>
+      <td>Crystal Palace</td>
+      <td>Bournemouth</td>
+      <td>After a season of twists and turns, of giddy h...</td>
       <td>Dominic Fifield</td>
-      <td>Craven Cottage</td>
-      <td>S Bennett</td>
-      <td>[17-10, 27-20, 9-4]</td>
-      <td>2.700000</td>
-      <td>2.350000</td>
-      <td>3.25</td>
-      <td>2009-12-24</td>
-      <td>https://www.theguardian.com/football/2009/dec/...</td>
+      <td>Selhurst Park</td>
+      <td>Roger East</td>
+      <td>[10-11, 11-4, 3-1]</td>
+      <td>1.909091</td>
+      <td>3.750000</td>
+      <td>4.000000</td>
+      <td>2019-05-10 13:52:14+00:00</td>
+      <td>2019-05-12 14:00:00</td>
+      <td>https://www.theguardian.com/football/2019/may/...</td>
     </tr>
     <tr>
       <th>...</th>
@@ -751,441 +414,97 @@ find(mongoengine_client,db,collection,game_filter,projection)
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>80</th>
-      <td>Portsmouth</td>
-      <td>Burnley</td>
-      <td>Avram Grant is growing tired of the hypothetic...</td>
-      <td>James Callow</td>
-      <td>Fratton Park</td>
-      <td>P Dowd</td>
-      <td>[4-5, 3-1, 12-5]</td>
-      <td>1.800000</td>
-      <td>4.000000</td>
-      <td>3.40</td>
-      <td>2009-12-04</td>
-      <td>https://www.theguardian.com/football/2009/dec/...</td>
-    </tr>
-    <tr>
-      <th>81</th>
-      <td>Wigan Athletic</td>
-      <td>Bolton Wanderers</td>
-      <td>Bolton arrive at the DW Stadium outside the re...</td>
-      <td>Marcus Christenson</td>
-      <td>DW Stadium</td>
-      <td>A Wiley</td>
-      <td>[1-1, 12-5, 9-4]</td>
-      <td>2.000000</td>
-      <td>3.400000</td>
-      <td>3.25</td>
-      <td>2009-12-18</td>
-      <td>https://www.theguardian.com/football/2009/dec/...</td>
-    </tr>
-    <tr>
-      <th>82</th>
-      <td>Blackburn Rovers</td>
-      <td>Stoke City</td>
-      <td>Surviving for three years is the key to Premie...</td>
-      <td>Richard Rae</td>
-      <td>Ewood Park</td>
-      <td>H Webb</td>
-      <td>[9-10, 13-5, 12-5]</td>
-      <td>1.900000</td>
-      <td>3.600000</td>
-      <td>3.40</td>
-      <td>2009-11-27</td>
-      <td>https://www.theguardian.com/football/2009/nov/...</td>
-    </tr>
-    <tr>
-      <th>83</th>
-      <td>Arsenal</td>
-      <td>Tottenham Hotspur</td>
-      <td>Robbie Keane's belief that Tottenham have a sq...</td>
-      <td>Kevin McCarra</td>
-      <td>Emirates Stadium</td>
-      <td>M Clattenburg</td>
-      <td>[11-20, 9-2, 13-5]</td>
-      <td>1.550000</td>
-      <td>5.500000</td>
-      <td>3.60</td>
-      <td>2009-10-30</td>
-      <td>https://www.theguardian.com/football/2009/oct/...</td>
-    </tr>
-    <tr>
-      <th>84</th>
-      <td>Portsmouth</td>
-      <td>Tottenham Hotspur</td>
-      <td>Jermain Defoe, Peter Crouch and Niko Kranjcar ...</td>
-      <td>Dominic Fifield</td>
-      <td>Fratton Park</td>
-      <td>P Dowd</td>
-      <td>[3-1, 4-5, 12-5]</td>
-      <td>4.000000</td>
-      <td>1.800000</td>
-      <td>3.40</td>
-      <td>2009-10-16</td>
-      <td>https://www.theguardian.com/football/2009/oct/...</td>
-    </tr>
-  </tbody>
-</table>
-<p>85 rows × 12 columns</p>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;.//datasets//previews.csv&quot;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Part-2-:-Mapping">Part 2 : Mapping<a class="anchor-link" href="#Part-2-:-Mapping"> </a></h2>
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_dict</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;.//datasets//final_data.csv&quot;</span><span class="p">)</span>
-<span class="c1"># extracted previews</span>
-<span class="n">df_guardian</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;.//datasets//previews.csv&quot;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_dict</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>ID</th>
-      <th>optaId</th>
-      <th>name</th>
-      <th>symid</th>
-      <th>shortClubName</th>
-      <th>optaName</th>
-      <th>whoScoredName</th>
-      <th>sofifaName</th>
-      <th>statsName</th>
-      <th>inStatName</th>
-      <th>transfermarktName</th>
-      <th>fotmobName</th>
-      <th>oddsportalName</th>
-      <th>fminsideName</th>
-      <th>nickName1</th>
-      <th>nickName2</th>
-      <th>nickName3</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>9e78bbc137fd00c66162080bc9e987e67297643dc50616...</td>
-      <td>3</td>
-      <td>Arsenal</td>
-      <td>ARS</td>
-      <td>Arsenal</td>
-      <td>Arsenal</td>
-      <td>Arsenal</td>
-      <td>Arsenal</td>
-      <td>Arsenal</td>
-      <td>Arsenal FC</td>
-      <td>Arsenal FC</td>
-      <td>Arsenal</td>
-      <td>Arsenal</td>
-      <td>Arsenal</td>
-      <td>Arsenal FC</td>
-      <td>Arsenal Football Club</td>
-      <td>The Gunners</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0ef9883721814dd09038659130c61c76f18976cb7b8e86...</td>
-      <td>47</td>
-      <td>Portsmouth</td>
-      <td>POR</td>
-      <td>Portsmouth</td>
-      <td>Portsmouth</td>
-      <td>Portsmouth</td>
-      <td>Portsmouth</td>
-      <td>Portsmouth</td>
-      <td>Portsmouth</td>
-      <td>Portsmouth FC</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Portsmouth FC</td>
-      <td>Portsmouth Football Club</td>
-      <td>Pompey</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>eb89c068ca204a72408360450847a990c97c5b5ff0ec9f...</td>
-      <td>110</td>
-      <td>Stoke City</td>
-      <td>STK</td>
-      <td>Stoke</td>
-      <td>Stoke City</td>
-      <td>Stoke</td>
-      <td>Stoke City</td>
-      <td>Stoke City</td>
-      <td>Stoke</td>
-      <td>Stoke City</td>
-      <td>Stoke</td>
-      <td>Stoke</td>
-      <td>Stoke</td>
-      <td>Stoke City FC</td>
-      <td>Stoke City Football Club</td>
-      <td>The Potters</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>c1a486f8ca465e58b6301f038e754058986187d454110c...</td>
-      <td>56</td>
-      <td>Sunderland</td>
-      <td>SUN</td>
-      <td>Sunderland</td>
-      <td>Sunderland</td>
-      <td>Sunderland</td>
-      <td>Sunderland</td>
-      <td>Sunderland</td>
-      <td>Sunderland AFC</td>
-      <td>Sunderland AFC</td>
-      <td>Sunderland</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Sunderland FC</td>
-      <td>Sunderland Association Football Club</td>
-      <td>Sunderland A.F.C.</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0db353094ccf93e0005cf378ea862b56e77cacc57b7c5e...</td>
-      <td>111</td>
-      <td>Wigan Athletic</td>
-      <td>WIG</td>
-      <td>Wigan</td>
-      <td>Wigan Athletic</td>
-      <td>Wigan</td>
-      <td>Wigan Athletic</td>
-      <td>Wigan Athletic</td>
-      <td>Wigan Athletic</td>
-      <td>Wigan Athletic</td>
-      <td>Wigan</td>
-      <td>Wigan</td>
-      <td>NaN</td>
-      <td>Wigan Athletic FC</td>
-      <td>Wigan Athletic Football Club</td>
-      <td>The Latics The Tics</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_guardian</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>home_team</th>
-      <th>away_team</th>
-      <th>text</th>
-      <th>author</th>
-      <th>venue</th>
-      <th>referee</th>
-      <th>odds</th>
-      <th>odds_home_team</th>
-      <th>odds_away_team</th>
-      <th>odds_draw</th>
-      <th>preview_date</th>
-      <th>preview_link</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Bolton Wanderers</td>
-      <td>Tottenham Hotspur</td>
-      <td>Old Trafford, where they have not won since 19...</td>
-      <td>Tim Rich</td>
-      <td>Reebok Stadium</td>
-      <td>M Jones</td>
-      <td>['13-5', '10-11', '23-10']</td>
-      <td>3.600000</td>
-      <td>1.909091</td>
-      <td>3.30</td>
-      <td>2009-10-02</td>
-      <td>https://www.theguardian.com/football/2009/oct/...</td>
-    </tr>
-    <tr>
-      <th>1</th>
+      <th>270</th>
+      <td>987636</td>
       <td>Manchester City</td>
-      <td>Hull City</td>
-      <td>Hull's previous visit to Eastlands ended in a ...</td>
+      <td>Fulham</td>
+      <td>Fulham are the first of the promoted sides to ...</td>
       <td>Jamie Jackson</td>
-      <td>City of Manchester Stadium</td>
-      <td>L Probert</td>
-      <td>['2-9', '10-1', '21-5']</td>
-      <td>1.222222</td>
+      <td>Etihad Stadium</td>
+      <td>Stuart Atwell</td>
+      <td>[1-7, 25-1, 10-1]</td>
+      <td>1.142857</td>
+      <td>26.000000</td>
       <td>11.000000</td>
-      <td>5.20</td>
-      <td>2009-11-27</td>
-      <td>https://www.theguardian.com/football/2009/nov/...</td>
+      <td>2018-09-14 14:00:55+00:00</td>
+      <td>2018-09-15 14:00:00</td>
+      <td>https://www.theguardian.com/football/2018/sep/...</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>Manchester City</td>
-      <td>Fulham</td>
-      <td>Mark Hughes will have half an eye on events at...</td>
-      <td>Chris Bell</td>
-      <td>City of Manchester Stadium</td>
-      <td>K Friend</td>
-      <td>['2-5', '13-2', '3-1']</td>
-      <td>1.400000</td>
-      <td>7.500000</td>
-      <td>4.00</td>
-      <td>2009-10-23</td>
-      <td>https://www.theguardian.com/football/2009/oct/...</td>
+      <th>271</th>
+      <td>987635</td>
+      <td>Huddersfield Town</td>
+      <td>Crystal Palace</td>
+      <td>Both sides go into the game on the back of dis...</td>
+      <td>Paul Doyle</td>
+      <td>John Smith’s Stadium</td>
+      <td>Graham Scott</td>
+      <td>[23-10, 11-5, 27-17]</td>
+      <td>3.300000</td>
+      <td>3.200000</td>
+      <td>2.588235</td>
+      <td>2018-09-14 12:35:57+00:00</td>
+      <td>2018-09-15 14:00:00</td>
+      <td>https://www.theguardian.com/football/2018/sep/...</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>Sunderland</td>
-      <td>Everton</td>
-      <td>Confidence could well be in short supply with ...</td>
-      <td>Louise Taylor</td>
-      <td>Stadium of Light</td>
-      <td>M Atkinson</td>
-      <td>['13-10', '9-5', '11-5']</td>
-      <td>2.300000</td>
-      <td>2.800000</td>
-      <td>3.20</td>
-      <td>2009-12-24</td>
-      <td>https://www.theguardian.com/football/2009/dec/...</td>
+      <th>272</th>
+      <td>987624</td>
+      <td>Cardiff City</td>
+      <td>Arsenal</td>
+      <td>Unai Emery has an excellent chance to record a...</td>
+      <td>Graham Searles</td>
+      <td>Cardiff City Stadium</td>
+      <td>Anthony Taylor</td>
+      <td>[9-2, 4-7, 3-1]</td>
+      <td>5.500000</td>
+      <td>1.571429</td>
+      <td>4.000000</td>
+      <td>2018-09-01 08:00:48+00:00</td>
+      <td>2018-09-02 12:30:00</td>
+      <td>https://www.theguardian.com/football/2018/sep/...</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>Fulham</td>
+      <th>273</th>
+      <td>987623</td>
+      <td>Burnley</td>
+      <td>Manchester United</td>
+      <td>Burnley have not made the blistering start the...</td>
+      <td>Paul Wilson</td>
+      <td>Turf Moor</td>
+      <td>Jonathan Moss</td>
+      <td>[9-2, 4-6, 13-5]</td>
+      <td>5.500000</td>
+      <td>1.666667</td>
+      <td>3.600000</td>
+      <td>2018-09-01 08:00:48+00:00</td>
+      <td>2018-09-02 15:00:00</td>
+      <td>https://www.theguardian.com/football/2018/sep/...</td>
+    </tr>
+    <tr>
+      <th>274</th>
+      <td>987630</td>
+      <td>Watford</td>
       <td>Tottenham Hotspur</td>
-      <td>Teams are increasingly viewing trips to Craven...</td>
-      <td>Dominic Fifield</td>
-      <td>Craven Cottage</td>
-      <td>S Bennett</td>
-      <td>['17-10', '27-20', '9-4']</td>
-      <td>2.700000</td>
-      <td>2.350000</td>
-      <td>3.25</td>
-      <td>2009-12-24</td>
-      <td>https://www.theguardian.com/football/2009/dec/...</td>
+      <td>Something has to give. Watford and Tottenham e...</td>
+      <td>Graham Searles</td>
+      <td>Vicarage Road</td>
+      <td>Andre Marriner</td>
+      <td>[5-1, 7-10, 3-1]</td>
+      <td>6.000000</td>
+      <td>1.700000</td>
+      <td>4.000000</td>
+      <td>2018-09-01 07:59:48+00:00</td>
+      <td>2018-09-02 15:00:00</td>
+      <td>https://www.theguardian.com/football/2018/sep/...</td>
     </tr>
   </tbody>
 </table>
+<p>275 rows × 14 columns</p>
 </div>
 </div>
 
@@ -1204,26 +523,10 @@ find(mongoengine_client,db,collection,game_filter,projection)
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">df_guardian</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="n">PreviewsMapping</span><span class="o">.</span><span class="n">save_mapped_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">df_dict</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;~//previews//dataset//previews.csv&quot;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/home/meherkh/anaconda3/envs/Real_Analytics/lib/python3.7/site-packages/dateparser/date_parser.py:35: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
-  date_obj = stz.localize(date_obj)
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 

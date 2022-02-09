@@ -1,6 +1,7 @@
 {
   "guardian_scraper": {
     "Overview": "/",
-    "The Guardian Scraper": "scraper.html"
+    "The Guardian Scraper": "scraper.html",
+    "Title": "DataStruct_Fixture.html"
   }
 }

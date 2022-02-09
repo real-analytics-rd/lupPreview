@@ -2,14 +2,21 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"Parser": "00_scraper.ipynb",
-         "PageExtractor": "00_scraper.ipynb",
-         "ScrapingTheGuardian": "00_scraper.ipynb",
-         "PreviewsMapping": "00_scraper.ipynb",
-         "Previews": "00_scraper.ipynb",
-         "MongoClient": "00_scraper.ipynb"}
+index = {"ScrapingTheGuardian": "00_scraper.ipynb",
+         "Parser": "01_parser.ipynb",
+         "PageExtractor": "02_extractor.ipynb",
+         "MongoClient": "03_Db_Config.ipynb",
+         "PreviewsMapping": "04_mapper.ipynb",
+         "Previews": "05_DataStruct_Previews.ipynb",
+         "Fixture": "06_DataStruct_Fixture.ipynb"}
 
-modules = ["scraper.py"]
+modules = ["scraper.py",
+           "parser.py",
+           "extractor.py",
+           "Db_Config.py",
+           "mapper.py",
+           "models/preview.py",
+           "models/fixture.py"]
 
 doc_url = "https://MeherKharbachi.github.io/guardian_scraper/"
 
