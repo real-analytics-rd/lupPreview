@@ -4,6 +4,7 @@ __all__ = ['PreviewsMapping']
 
 # Cell
 import pandas as pd
+import logging
 from .Db_Config import *
 from datetime import datetime
 from .models.fixture import *
@@ -100,14 +101,16 @@ class PreviewsMapping:
         # homeTeamId, awayTeamId
         game = Fixture.objects(
             gameDate__gte=preview_date,
-            competitionId=8,
             homeTeamId=int(home_team_id),
             awayTeamId=int(away_team_id),
         ).first()
 
-        # If there is a match
-        # We pick the game ID and date
+        # if the game is a Premier League
+        # and the preview date is less than 15 days from the match date
+        # we return the game
         if game != None:
-            return game
-        else:
-            return None
+            date_interval = game.gameDate - preview_date.replace(tzinfo=None)
+            if (game.competitionId == 8) and (date_interval.days <= 15):
+                return game
+
+        return None

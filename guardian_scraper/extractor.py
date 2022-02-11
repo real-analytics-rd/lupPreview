@@ -182,7 +182,7 @@ class PageExtractor:
             # it is located in the strong tag
             possible_author_section = text_section.find("strong")
             # for some previews the author information is not found
-            # if it's available we take it , else it will be 'n/a'
+            # if it's available we take it , else it will be None
             if str(possible_author_section) != "None":
                 author = possible_author_section.text
         else:
@@ -233,7 +233,7 @@ class PageExtractor:
             pattern_referee_values = re.compile(referee_regex)
             referee = PageExtractor.get_values_matching_regex(
                 content, response_type, pattern_referee_values
-            )[0].strip()
+            )[0].strip().split(",")[0]
         except Exception as e:
             logging.error("Referee information is not available")
             referee = None

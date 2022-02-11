@@ -14,7 +14,7 @@ entries:
       url: scraper.html
     - output: web,pdf
       title: Title
-      url: DataStruct_Fixture.html
+      url: Literature review.html
     output: web
     title: guardian_scraper
   output: web

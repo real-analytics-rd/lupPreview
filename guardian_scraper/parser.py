@@ -4,6 +4,7 @@ __all__ = ['Parser']
 
 # Cell
 import logging
+from time import sleep
 from typing import Tuple
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
@@ -41,14 +42,16 @@ class Parser:
               the html format of the page
 
         """
+
         try:
+            sleep(5)
             # Request the url
             request = session.get(page_url)
             # Get the html document of the page
             page = BeautifulSoup(request.text, "html.parser")
             return page
         except Exception as e:
-            logging.error("We cannot parse the specified page")
+            logging.error("Cannot parse the given page")
 
     @staticmethod
     def get_next_page(page: BeautifulSoup) -> Tuple[str, bool]:

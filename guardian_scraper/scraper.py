@@ -51,7 +51,7 @@ class ScrapingTheGuardian:
     # venue, referee, odds pattern regex
     # in some previews, all of the information is on the same line.
     VENUE_REGEX = "Venue(.*)Tickets|Venue(.*),|Venue(.*)"
-    REFEREE_REGEX = "Referee(.*)This season's|Referee(.*)Last season's|Referee(.*)Odds|Referee[\s](.*)|Ref(.*)Odds"
+    REFEREE_REGEX = "Referee(.*)This season|Referee(.*)Last season's|Referee(.*)Odds|Referee[\s](.*)|Ref(.*)Odds"
     # {Odds H 11-8 A 11-8 D 11-8}
     # {Odds Liverpool 11-8 Aston Villa 11-8 Draw 11-8}
     # missing label {Odds H 11-8 11-8 D 11-8}
@@ -282,9 +282,7 @@ class ScrapingTheGuardian:
                     "html.parser",
                 )
                 # preview date
-                preview_date = data["response"]["content"]["blocks"]["body"][0][
-                    "createdDate"
-                ]
+                preview_date = data["response"]["content"]["webPublicationDate"]
                 preview_date = dateparser.parse(
                     preview_date, settings={"TIMEZONE": "UTC"}
                 )
@@ -346,7 +344,10 @@ class ScrapingTheGuardian:
                 all_previews.append(preview_infos)
 
             else:
-                logging.info("The game does not exist in the Opta database")
-
+                logging.info(
+                    "The game {} does not exist in the Opta database".format(
+                        preview_title
+                    )
+                )
 
         return last_preview, all_previews

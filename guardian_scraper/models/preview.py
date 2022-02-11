@@ -50,14 +50,13 @@ class Previews(Document):
 
     """
 
-    gameId = IntField(db_field="gameId", required=True)
+    gameId = IntField(primary_key=True,db_field="gameId", required=True)
     homeTeam = StringField(db_field="homeTeam", required=True)
     awayTeam = StringField(db_field="awayTeam", required=True)
     text = StringField(db_field="text", required=False)
     author = StringField(db_field="author", required=False)
     venue = StringField(db_field="venue", required=False)
     referee = StringField(db_field="referee", required=False)
-    #odds = StringField(db_field="odds", required=False)
     odds=ListField(StringField(),db_field="odds",required=False)
     oddsHomeTeam = FloatField(db_field="oddsHomeTeam", required=False)
     oddsAwayTeam = FloatField(db_field="oddsAwayTeam", required=False)
