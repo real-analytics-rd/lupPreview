@@ -221,6 +221,7 @@ class ScrapingTheGuardian:
         last_preview: bool,
         all_previews: list,
         df_teams: pd.DataFrame,
+        api_key: str,
     ) -> Union[bool, list]:
         """
           save all browsed previews in local
@@ -237,6 +238,8 @@ class ScrapingTheGuardian:
             a list that contains all extracted previews
         df_teams: pd.DataFrame
             a dataframe that contains teams and their different names
+        api_key: str
+            the guardian api key
 
         Returns
         -------
@@ -266,7 +269,9 @@ class ScrapingTheGuardian:
             response = requests.get(
                 "https://content.guardianapis.com/"
                 + api_preview_url
-                + "?api-key=fd4452e9-76a5-45a1-b30d-bdd156640b9c&show-blocks=all"
+                + "?api-key="
+                + api_key
+                + "&show-blocks=all"
             )
             # if the api works we get the title and the content of the preview
             # else we extract html contents
