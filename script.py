@@ -24,7 +24,7 @@ def main(page, api_key, scraping_all):
     last_preview = False
     # last extracted preview date
     last_previews_date = None
-
+    # if the argument is not "all"
     if scraping_all == None:
         # we specify the last preview date in the previews collection on which the scraper will be turned off.
         mongoengine_client = MongoClient.connect("1")
@@ -38,7 +38,6 @@ def main(page, api_key, scraping_all):
     logging.info(
         "The last preview date stored in the database is: {}".format(last_previews_date)
     )
-    all_previews = []
     # charging teams dictionary
     df_teams = pd.read_csv(".//datasets//final_data.csv")
     # if we are not at the last page
@@ -55,7 +54,7 @@ def main(page, api_key, scraping_all):
         page = Parser.parse_page(url, scraper.session)
         # launch the scraper , extract previews information
         last_preview, all_previews = scraper.extract_previews(
-            page, last_previews_date, last_preview, all_previews, df_teams, api_key
+            page, last_previews_date, last_preview, df_teams, api_key
         )
         # get the url of the following page and verify if we are at the last page
         url, last_page = Parser.get_next_page(page)

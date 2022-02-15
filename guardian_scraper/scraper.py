@@ -219,7 +219,6 @@ class ScrapingTheGuardian:
         page: BeautifulSoup,
         previews_last_date: datetime,
         last_preview: bool,
-        all_previews: list,
         df_teams: pd.DataFrame,
         api_key: str,
     ) -> Union[bool, list]:
@@ -234,8 +233,6 @@ class ScrapingTheGuardian:
             the last extracted preview date in the database
         last_preview: bool
             an indicator to know when we should stop the scraper
-        all_previews: list
-            a list that contains all extracted previews
         df_teams: pd.DataFrame
             a dataframe that contains teams and their different names
         api_key: str
@@ -346,7 +343,6 @@ class ScrapingTheGuardian:
                 )
                 # Validate and save input raw data
                 MongoClient.save(preview)
-                all_previews.append(preview_infos)
 
             else:
                 logging.info(
@@ -355,4 +351,4 @@ class ScrapingTheGuardian:
                     )
                 )
 
-        return last_preview, all_previews
+        return last_preview

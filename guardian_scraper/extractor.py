@@ -29,7 +29,7 @@ class PageExtractor:
 
     @staticmethod
     def get_values_matching_regex(
-        content: BeautifulSoup, response_type: str, pattern_returned_values: re.Pattern
+        content: BeautifulSoup, response_type: str, pattern_returned_values: "re.Pattern"
     ) -> Union[List[str], None]:
         """
         returns all matched patterns from a preview page.
