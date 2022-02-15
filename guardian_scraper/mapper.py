@@ -4,12 +4,10 @@ __all__ = ['PreviewsMapping']
 
 # Cell
 import pandas as pd
-import logging
 from .Db_Config import *
 from datetime import datetime
 from .models.fixture import *
 from typing import Dict
-from mongoengine import DynamicDocument,IntField
 
 # Cell
 class PreviewsMapping:

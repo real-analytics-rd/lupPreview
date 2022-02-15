@@ -5,7 +5,6 @@ __all__ = ['ScrapingTheGuardian']
 # Cell
 import pandas as pd
 import dateparser
-import random
 import requests
 import logging
 from .Db_Config import *
