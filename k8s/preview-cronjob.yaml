@@ -1,0 +1,17 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: theguardian-previews
+spec:
+  schedule: "0 0 * * 5"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name : ra-app-theguardian
+              image: eu.gcr.io/flash-sol-278111/theguardian
+              imagePullPolicy: Always
+          restartPolicy: Never
