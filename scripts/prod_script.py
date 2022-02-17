@@ -8,10 +8,10 @@ import pandas as pd
 from time import sleep
 package_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(package_dir))
-from guardian_scraper.scraper import *
-from guardian_scraper.parser import *
-from guardian_scraper.Db_Config import *
-from guardian_scraper.models.preview import *
+from theguardianscraper.scraper import *
+from theguardianscraper.parser import *
+from theguardianscraper.config.mongo import mongo_init
+from theguardianscraper.models.preview import *
 
 
 def load_file(file_path):
@@ -21,6 +21,8 @@ def load_file(file_path):
 
 
 def main(page, api_key, scraping_all, file_path):
+    
+    mongo_init("prod_atlas")
 
     # starting url
     url = "https://www.theguardian.com/football/series/match-previews?page=" + str(page)
@@ -35,7 +37,6 @@ def main(page, api_key, scraping_all, file_path):
     # if the argument is not "all"
     if scraping_all == None:
         # we specify the last preview date in the previews collection on which the scraper will be turned off.
-        mongoengine_client = MongoClient.connect("1")
         previews_last_date = (
             Previews.objects().order_by("-previewDate", "-gameDate").first()
         )
@@ -62,7 +63,7 @@ def main(page, api_key, scraping_all, file_path):
         # get the html format of the page containing previews
         page = Parser.parse_page(url, scraper.session)
         # launch the scraper , extract previews information
-        last_preview, all_previews = scraper.extract_previews(
+        last_preview = scraper.extract_previews(
             page, last_previews_date, last_preview, df_teams, api_key
         )
         # get the url of the following page and verify if we are at the last page
@@ -94,7 +95,7 @@ if __name__ == "__main__":
         "--file_path",
         metavar="file_path",
         type=str,
-        default="..//teams_mapping_datasets//english_teams.csv",
+        default="/scripts/teams.csv",
         help="Enter the path of the teams mapping file",
     )
     args = parser.parse_args()
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     file_path = args.file_path
     # store scraper actions in a log file
     logging.basicConfig(
-        filename="..//logs//scraper.log",
+        filename="/logs/theguardian.log",
         level=logging.INFO,
         format="%(levelname)s:%(message)s",
     )

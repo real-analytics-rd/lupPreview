@@ -1,0 +1,58 @@
+{% set name = "theguardianscraper" %}
+{% set version = "0.0.3" %}
+{% set data = load_setup_py_data() %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://files.pythonhosted.org/packages/56/38/e571c3640a25c99123469628afeb738d538e55916759e2cdccf24d8da418/theguardianscraper-0.0.3.tar.gz
+  sha256: 65c72d849083fd6d757909ea25568772e1ed0e2d2f9d2fe0ae321379dae7fe4c
+
+build:
+  skip: true # [win]
+  number: 0
+  script: python -m pip install . -vv
+
+requirements:
+  host:
+    - python 3.9
+    - pip 
+  run:
+    - python 3.9
+    - pip 
+    - numpy >=1.20 
+    - pymongo 3.12
+    - pandas >=1.2.4
+    - dateparser
+    - regex
+    - beautifulsoup4
+    - requests-html
+    - dnspython >=2.0.0 
+    - toml
+    - mongoengine
+
+
+test:
+  imports:
+    - theguardianscraper
+
+about:
+  home: https://github.com/real-analytics-rd/lupPreview
+  # Remember to specify the license variants for BSD, Apache, GPL, and LGPL.
+  # Use the SPDX identifier, e.g: GPL-2.0-only instead of GNU General Public License version 2.0
+  # See https://spdx.org/licenses/
+  license: GPL-3
+  # The license_family, i.e. "BSD" if license is "BSD-3-Clause". (optional)
+  license_family: GPL3
+  # It is strongly encouraged to include a license file in the package,
+  # (even if the license doesn't require it) using the license_file entry.
+  # See https://docs.conda.io/projects/conda-build/en/latest/resources/define-metadata.html#license-file
+  license_file: LICENSE
+  summary: 'The Guardian Scraper'
+
+extra:
+  recipe-maintainers:
+    # GitHub IDs for maintainers of the recipe.
+    - MeherKharbachi

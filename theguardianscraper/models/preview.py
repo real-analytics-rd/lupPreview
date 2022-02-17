@@ -3,12 +3,8 @@
 __all__ = ['Previews']
 
 # Cell
-from mongoengine import Document
-from mongoengine import IntField
-from mongoengine import FloatField
-from mongoengine import StringField
-from mongoengine import DateTimeField
-from mongoengine import ListField
+from mongoengine import Document, IntField, FloatField, StringField, DateTimeField, ListField
+from ..config.localconfig import CONFIG
 
 # Cell
 class Previews(Document):
@@ -64,3 +60,8 @@ class Previews(Document):
     gameDate = DateTimeField(db_field="gameDate", required=False)
     previewDate = DateTimeField(db_field="previewDate", required=False)
     previewLink = StringField(db_field="previewLink", required=True)
+
+    meta = {
+        "db_alias": "theguardian",
+        "collection": CONFIG["connections"]["theguardian"]["previews"],
+    }

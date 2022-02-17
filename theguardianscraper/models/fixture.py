@@ -3,8 +3,8 @@
 __all__ = ['Fixture']
 
 # Cell
-from mongoengine import DynamicDocument
-from mongoengine import IntField
+from mongoengine import DynamicDocument, IntField
+from ..config.localconfig import CONFIG
 
 # Cell
 class Fixture(DynamicDocument):
@@ -21,6 +21,9 @@ class Fixture(DynamicDocument):
         the competition id of the match
 
     """
-    meta = {"collection": "Fixture"}
     gameId = IntField(db_field="gameId")
     competitionId = IntField(db_field="competitionId")
+    meta = {
+        "db_alias": "opta",
+        "collection": CONFIG["connections"]["opta"]["fixture"],
+    }

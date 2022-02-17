@@ -7,7 +7,7 @@ import pandas as pd
 import dateparser
 import requests
 import logging
-from .Db_Config import *
+from .config.mongo import mongo_init
 from .parser import *
 from .extractor import *
 from .mapper import *
@@ -321,8 +321,6 @@ class ScrapingTheGuardian:
                     response_type,
                 )
                 logging.info("Returned Preview information: {}".format(preview_infos))
-                # connect to database
-                mongoengine_client = MongoClient.connect("1")
                 # preview class
                 preview = Previews(
                     gameId=preview_infos["game_id"],
@@ -341,7 +339,7 @@ class ScrapingTheGuardian:
                     previewLink=preview_infos["preview_link"],
                 )
                 # Validate and save input raw data
-                MongoClient.save(preview)
+                preview.save()
 
             else:
                 logging.info(

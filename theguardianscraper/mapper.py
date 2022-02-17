@@ -4,7 +4,6 @@ __all__ = ['PreviewsMapping']
 
 # Cell
 import pandas as pd
-from .Db_Config import *
 from datetime import datetime
 from .models.fixture import *
 from typing import Dict
@@ -92,8 +91,7 @@ class PreviewsMapping:
         Fixture class
 
         """
-        # Initialize a MongoDb instance with mongoengine
-        mongoengine_client = MongoClient.connect("0")
+
         # Do a MongoDb query
         # Filter data by gameDate,competitionId,
         # homeTeamId, awayTeamId
